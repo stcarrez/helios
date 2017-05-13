@@ -66,6 +66,27 @@ package body Helios.Monitor is
    end Create_Definition;
 
    --  ------------------------------
+   --  Find a child definition with the given name.
+   --  Returns null if there is no such definition.
+   --  ------------------------------
+   function Find_Definition (Agent : in Agent_Type;
+                             Name  : in String) return Definition_Type_Access is
+      Node : Definition_Type_Access := Agent.Node;
+   begin
+      if Node = null then
+         return null;
+      end if;
+      Node := Node.Child;
+      while Node /= null loop
+         if Node.Name = Name then
+            return Node;
+         end if;
+         Node := Node.Next;
+      end loop;
+      return null;
+   end Find_Definition;
+
+   --  ------------------------------
    --  Register the agent.
    --  ------------------------------
    procedure Register (Agent : in out Agent_Type'Class;
