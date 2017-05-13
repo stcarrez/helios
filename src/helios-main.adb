@@ -24,6 +24,7 @@ with Util.Streams.Buffered;
 with Util.Serialize.IO.JSON;
 with Helios.Monitor.CPU;
 with Helios.Monitor.Ifnet;
+with Helios.Monitor.Disks;
 with Helios.Reports;
 procedure Helios.Main is
 
@@ -31,6 +32,7 @@ procedure Helios.Main is
 
    Mon       : Helios.Monitor.CPU.Agent_Type;
    Ifnet_Mon : Helios.Monitor.Ifnet.Agent_Type;
+   Disk_Mon  : Helios.Monitor.Disks.Agent_Type;
    Data      : Helios.Monitor.Snapshot_Type;
    Output    : aliased Util.Streams.Texts.Print_Stream;
    Stream    : Util.Serialize.IO.JSON.Output_Stream;
@@ -39,6 +41,7 @@ begin
 
    Helios.Monitor.Register (Mon, "cpu");
    Helios.Monitor.Register (Ifnet_Mon, "ifnet");
+   Helios.Monitor.Register (Disk_Mon, "disks");
    Output.Initialize (Size => 1_000_000);
    Stream.Initialize (Output'Unchecked_Access);
    Stream.Start_Document;
@@ -47,6 +50,7 @@ begin
    for I in 1 .. 1 loop
       Mon.Collect (Data);
       Ifnet_Mon.Collect (Data);
+      Disk_Mon.Collect (Data);
       Helios.Reports.Write_Snapshot (Stream, Data, Helios.Monitor.Get_Root);
       delay 1.0;
    end loop;
