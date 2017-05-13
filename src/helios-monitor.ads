@@ -67,6 +67,11 @@ package Helios.Monitor is
    function Create_Definition (Agent : in Agent_Type;
                                Name  : in String) return Definition_Type_Access;
 
+   --  Find a child definition with the given name.
+   --  Returns null if there is no such definition.
+   function Find_Definition (Agent : in Agent_Type;
+                             Name  : in String) return Definition_Type_Access;
+
    --  Register the agent.
    procedure Register (Agent : in out Agent_Type'Class;
                        Name  : in String);
