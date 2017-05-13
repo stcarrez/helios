@@ -95,7 +95,11 @@ package body Helios.Tools.Files is
          while Pos <= Last and then Line (Pos) /= ' ' loop
             Pos := Pos + 1;
          end loop;
-         File.Field_End (Field_Pos) := Pos - 1;
+         if Line (Pos - 1) = ':' then
+            File.Field_End (Field_Pos) := Pos - 2;
+         else
+            File.Field_End (Field_Pos) := Pos - 1;
+         end if;
       end loop;
       File.Field_Count := Field_Pos;
    end Read;
