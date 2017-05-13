@@ -66,6 +66,19 @@ package body Helios.Monitor is
    end Create_Definition;
 
    --  ------------------------------
+   --  Add a definition to the agent.
+   --  ------------------------------
+   procedure Add_Definition (Agent : in out Agent_Type;
+                             Def   : in Definition_Type_Access) is
+   begin
+      Current_Index := Current_Index + 1;
+      Def.Parent := Agent.Node;
+      Def.Next := Agent.Node.Child;
+      Def.Index := Current_Index;
+      Agent.Node.Child := Def;
+   end Add_Definition;
+
+   --  ------------------------------
    --  Find a child definition with the given name.
    --  Returns null if there is no such definition.
    --  ------------------------------
