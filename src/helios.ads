@@ -15,5 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
+with Interfaces;
 package Helios is
+   subtype Uint64 is Interfaces.Unsigned_64;
 end Helios;
