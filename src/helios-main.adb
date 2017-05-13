@@ -23,27 +23,30 @@ with Util.Streams.Texts;
 with Util.Streams.Buffered;
 with Util.Serialize.IO.JSON;
 with Helios.Monitor.CPU;
+with Helios.Monitor.Ifnet;
 with Helios.Reports;
 procedure Helios.Main is
 
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Main");
 
-   Mon     : Helios.Monitor.CPU.Agent_Type;
-   Data    : Helios.Monitor.Snapshot_Type;
-   Output  : aliased Util.Streams.Texts.Print_Stream;
-   Stream  : Util.Serialize.IO.JSON.Output_Stream;
+   Mon       : Helios.Monitor.CPU.Agent_Type;
+   Ifnet_Mon : Helios.Monitor.Ifnet.Agent_Type;
+   Data      : Helios.Monitor.Snapshot_Type;
+   Output    : aliased Util.Streams.Texts.Print_Stream;
+   Stream    : Util.Serialize.IO.JSON.Output_Stream;
 begin
    Util.Log.Loggers.Initialize ("helios.properties");
 
    Helios.Monitor.Register (Mon, "cpu");
-   Mon.Start;
+   Helios.Monitor.Register (Ifnet_Mon, "ifnet");
    Output.Initialize (Size => 1_000_000);
    Stream.Initialize (Output'Unchecked_Access);
    Stream.Start_Document;
    Stream.Start_Array ("raw");
    Helios.Monitor.Initialize (Data);
-   for I in 1 .. 10 loop
+   for I in 1 .. 1 loop
       Mon.Collect (Data);
+      Ifnet_Mon.Collect (Data);
       Helios.Reports.Write_Snapshot (Stream, Data, Helios.Monitor.Get_Root);
       delay 1.0;
    end loop;
