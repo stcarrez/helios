@@ -68,8 +68,8 @@ package body Helios.Monitor is
    --  ------------------------------
    --  Add a new definition node to the definition.
    --  ------------------------------
-   procedure Add_Definition (Into : in Definition_Type_Access;
-                             Name : in String) is
+   function Create_Definition (Into : in Definition_Type_Access;
+                               Name : in String) return Definition_Type_Access is
       Result : constant Definition_Type_Access := new Definition_Type (Len => Name'Length);
    begin
       Current_Index := Current_Index + 1;
@@ -78,7 +78,8 @@ package body Helios.Monitor is
       Result.Next   := Into.Child;
       Into.Child    := Result;
       Result.Index  := Current_Index;
-   end Add_Definition;
+      return Result;
+   end Create_Definition;
 
    --  ------------------------------
    --  Add a definition to the agent.
