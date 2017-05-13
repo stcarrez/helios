@@ -54,6 +54,10 @@ package Helios.Tools.Files is
    function Get_Value (File : in File_Extractor;
                        Pos  : in Positive) return Uint64;
 
+   --  Get the value of the field at the given position.
+   function Get_Value (File : in File_Extractor;
+                       Pos  : in Positive) return String;
+
    --  Read one line and prepare for extraction.
    procedure Read (File : in out File_Extractor);
 
