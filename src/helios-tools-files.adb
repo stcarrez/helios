@@ -65,6 +65,16 @@ package body Helios.Tools.Files is
    end Get_Value;
 
    --  ------------------------------
+   --  Get the value of the field at the given position.
+   --  ------------------------------
+   function Get_Value (File : in File_Extractor;
+                       Pos  : in Positive) return String is
+   begin
+      return File.Line (File.Field_Start (Pos) .. File.Field_End (Pos));
+   end Get_Value;
+
+
+   --  ------------------------------
    --  Read one line and prepare for extraction.
    --  ------------------------------
    procedure Read (File : in out File_Extractor) is
