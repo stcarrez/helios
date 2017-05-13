@@ -72,8 +72,8 @@ package Helios.Monitor is
                              Def   : in Definition_Type_Access);
 
    --  Add a new definition node to the definition.
-   procedure Add_Definition (Into : in Definition_Type_Access;
-                             Name : in String);
+   function Create_Definition (Into : in Definition_Type_Access;
+                             Name : in String) return Definition_Type_Access;
 
    --  Find a child definition with the given name.
    --  Returns null if there is no such definition.
