@@ -26,9 +26,9 @@ package Helios.Monitor is
    subtype Value_Array_Index is Value_Index range 1 .. Value_Index'Last;
 
    type Definition_Type;
-   type Definition_Type_Access is access all Definition_Type;
+   type Definition_Type_Access is access all Definition_Type'Class;
 
-   type Definition_Type (Len : Natural) is record
+   type Definition_Type (Len : Natural) is tagged record
       Kind    : Value_Type;
       Index   : Value_Index := 0;
       Parent  : Definition_Type_Access;
