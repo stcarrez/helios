@@ -71,6 +71,10 @@ package Helios.Monitor is
    procedure Add_Definition (Agent : in out Agent_Type;
                              Def   : in Definition_Type_Access);
 
+   --  Add a new definition node to the definition.
+   procedure Add_Definition (Into : in Definition_Type_Access;
+                             Name : in String);
+
    --  Find a child definition with the given name.
    --  Returns null if there is no such definition.
    function Find_Definition (Agent : in Agent_Type;
