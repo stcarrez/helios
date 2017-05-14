@@ -16,7 +16,6 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Util.Serialize.IO;
-with Helios.Monitor;
 with Helios.Datas;
 with Helios.Schemas;
 package Helios.Reports is
