@@ -19,6 +19,10 @@ with Ada.Calendar;
 with Ada.Real_Time;
 with Ada.Finalization;
 with Helios.Schemas;
+
+--  == Data Representation ==
+--  The monitored data is collected into snapshots and snapshots are stored in a queue
+--  before being flushed.
 package Helios.Datas is
 
    subtype Value_Index is Schemas.Value_Index;
