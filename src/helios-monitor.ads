@@ -15,8 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with Ada.Calendar;
-with Ada.Real_Time;
+
 with Ada.Finalization;
 with Helios.Schemas;
 with Helios.Datas;
