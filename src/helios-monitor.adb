@@ -18,6 +18,8 @@
 
 package body Helios.Monitor is
 
+   List : Agent_Type_Access;
+
    --  ------------------------------
    --  Create a new definition with the given name.
    --  ------------------------------
@@ -57,8 +59,22 @@ package body Helios.Monitor is
    procedure Register (Agent : in out Agent_Type'Class;
                        Name  : in String) is
    begin
+      Agent.Next := List;
+      List := Agent'Unchecked_Access;
       Agent.Node := Schemas.Create_Definition (null, Name, Schemas.V_NONE);
       Agent.Start;
    end Register;
+
+   --  ------------------------------
+   --  Collect the values for each registered plugin.
+   --  ------------------------------
+   procedure Collect_All (Values : in out Datas.Snapshot_Type) is
+      Agent : Agent_Type_Access := List;
+   begin
+      while Agent /= null loop
+         Agent.Collect (Values);
+         Agent := Agent.Next;
+      end loop;
+   end Collect_All;
 
 end Helios.Monitor;
