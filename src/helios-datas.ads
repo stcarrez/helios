@@ -38,8 +38,11 @@ package Helios.Datas is
       Values        : Value_Array_Access;
    end record;
 
-   type Snapshot_Queue_Type is limited record
-      Data : Snapshot_Type;
+   type Snapshot_Array is array (Positive range <>) of Snapshot_Type;
+
+   type Snapshot_Queue_Type (Max_Count : Positive) is limited record
+      Count : Natural := 0;
+      Data  : Snapshot_Array (1 .. Max_Count);
    end record;
 
    --  Initialize the snapshot.
