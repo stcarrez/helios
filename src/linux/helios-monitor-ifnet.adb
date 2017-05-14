@@ -26,13 +26,15 @@ package body Helios.Monitor.Ifnet is
    --  ------------------------------
    procedure Make_Interface (Agent : in out Agent_Type;
                              Name  : in String) is
+
       Itf : constant Interface_Definition_Type_Access
         := new Interface_Definition_Type (Len => Name'Length);
    begin
       Itf.Name := Name;
       Agent.Add_Definition (Itf.all'Access);
       for I in Itf.Stats'Range loop
-         Itf.Stats (I) := Create_Definition (Itf.all'Access, To_Lower_Case (Stat_Type'Image (I)));
+         Itf.Stats (I) := Schemas.Create_Definition (Itf.all'Access,
+                                                     To_Lower_Case (Stat_Type'Image (I)));
       end loop;
    end Make_Interface;
 
@@ -52,9 +54,11 @@ package body Helios.Monitor.Ifnet is
    --  ------------------------------
    overriding
    procedure Collect (Agent  : in out Agent_Type;
-                      Values : in out Snapshot_Type) is
+                      Values : in out Datas.Snapshot_Type) is
+      use type Schemas.Definition_Type_Access;
+
       Line : Helios.Tools.Files.File_Extractor;
-      Node : Definition_Type_Access;
+      Node : Schemas.Definition_Type_Access;
       Itf  : Interface_Definition_Type_Access;
    begin
       Line.Open ("/proc/net/dev");
@@ -67,7 +71,7 @@ package body Helios.Monitor.Ifnet is
          if Node /= null then
             Itf := Interface_Definition_Type'Class (Node.all)'Access;
             for I in Itf.Stats'Range loop
-               Set_Value (Values, Itf.Stats (I), Line.Get_Value (2 + Stat_Type'Pos (I)));
+               Values.Set_Value (Itf.Stats (I), Line.Get_Value (2 + Stat_Type'Pos (I)));
             end loop;
          end if;
       end loop;
