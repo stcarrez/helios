@@ -40,4 +40,23 @@ package body Helios.Reports.Files is
       Stream.Close;
    end Save_Snapshot;
 
+   --  ------------------------------
+   --  Write the collected snapshot in the file in JSON format.
+   --  ------------------------------
+   procedure Save_Snapshot (Path : in String;
+                            Data : in Helios.Datas.Snapshot_Queue_Type;
+                            Node : in Helios.Schemas.Definition_Type_Access) is
+      File      : aliased Util.Streams.Files.File_Stream;
+      Output    : aliased Util.Streams.Texts.Print_Stream;
+      Stream    : Util.Serialize.IO.JSON.Output_Stream;
+   begin
+      File.Create (Ada.Streams.Stream_IO.Out_File, Path);
+      Output.Initialize (File'Unchecked_Access);
+      Stream.Initialize (Output'Unchecked_Access);
+      Stream.Start_Document;
+      Write_Snapshot (Stream, Data, Helios.Schemas.Get_Root);
+      Stream.End_Document;
+      Stream.Close;
+   end Save_Snapshot;
+
 end Helios.Reports.Files;
