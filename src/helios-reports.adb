@@ -19,17 +19,17 @@
 package body Helios.Reports is
 
    use type Uint64;
-   use type Helios.Monitor.Value_Index;
-   use type Helios.Monitor.Definition_Type_Access;
+   use type Helios.Schemas.Value_Index;
+   use type Helios.Schemas.Definition_Type_Access;
 
    --  ------------------------------
    --  Write the collected snapshot in the IO stream.  The output stream can be an XML
    --  or a JSON stream.  The node definition is used for the structure of the output content.
    --  ------------------------------
    procedure Write_Snapshot (Stream : in out Util.Serialize.IO.Output_Stream'Class;
-                             Data   : in Helios.Monitor.Snapshot_Type;
-                             Node   : in Helios.Monitor.Definition_Type_Access) is
-      Child : Helios.Monitor.Definition_Type_Access;
+                             Data   : in Helios.Datas.Snapshot_Type;
+                             Node   : in Helios.Schemas.Definition_Type_Access) is
+      Child : Helios.Schemas.Definition_Type_Access;
       Value : Uint64;
    begin
       Stream.Start_Entity (Node.Name);
