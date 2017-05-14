@@ -46,10 +46,10 @@ package body Helios.Monitor is
                              Name  : in String) return Schemas.Definition_Type_Access is
       use type Schemas.Definition_Type_Access;
    begin
-      if Agent.Node = null then
+      if Agent.Node = null or else Agent.Node.Child = null then
          return null;
       else
-         return Schemas.Find_Definition (Agent.Node, Name);
+         return Schemas.Find_Definition (Agent.Node.Child, Name);
       end if;
    end Find_Definition;
 
