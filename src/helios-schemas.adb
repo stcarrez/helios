@@ -52,8 +52,14 @@ package body Helios.Schemas is
       end if;
       Result.Name   := Name;
       Result.Parent := Into;
-      Result.Next   := Into.Child;
-      Into.Child    := Result;
+      if Into /= null then
+         Result.Next   := Into.Child;
+         Into.Child    := Result;
+      else
+         Result.Parent := Root'Access;
+         Result.Next   := Root.Child;
+         Root.Child    := Result;
+      end if;
       return Result;
    end Create_Definition;
 
