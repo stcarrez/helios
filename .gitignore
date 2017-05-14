@@ -1,0 +1,8 @@
+autom4te.cache
+Makefile
+helios.gpr
+tests.gpr
+rules.mk
+config.status
+*.log
+*~
