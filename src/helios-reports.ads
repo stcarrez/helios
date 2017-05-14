@@ -26,4 +26,10 @@ package Helios.Reports is
                              Data   : in Helios.Datas.Snapshot_Type;
                              Node   : in Helios.Schemas.Definition_Type_Access);
 
+   --  Write the collected snapshot in the IO stream.  The output stream can be an XML
+   --  or a JSON stream.  The node definition is used for the structure of the output content.
+   procedure Write_Snapshot (Stream : in out Util.Serialize.IO.Output_Stream'Class;
+                             Data   : in Helios.Datas.Snapshot_Queue_Type;
+                             Node   : in Helios.Schemas.Definition_Type_Access);
+
 end Helios.Reports;
