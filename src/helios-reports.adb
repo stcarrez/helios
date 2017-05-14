@@ -52,4 +52,47 @@ package body Helios.Reports is
       Stream.End_Entity (Node.Name);
    end Write_Snapshot;
 
+   --  ------------------------------
+   --  Write the collected snapshot in the IO stream.  The output stream can be an XML
+   --  or a JSON stream.  The node definition is used for the structure of the output content.
+   --  ------------------------------
+   procedure Write_Snapshot (Stream : in out Util.Serialize.IO.Output_Stream'Class;
+                             Data   : in Helios.Datas.Snapshot_Queue_Type;
+                             Node   : in Helios.Schemas.Definition_Type_Access) is
+      Child      : Helios.Schemas.Definition_Type_Access;
+      Value      : Uint64;
+      Prev_Value : Uint64;
+      Offset     : Long_Long_Integer;
+   begin
+      Stream.Start_Entity (Node.Name);
+      Child := Node.Child;
+      while Child /= null loop
+         if Child.Child /= null then
+            Write_Snapshot (Stream, Data, Child);
+         elsif Child.Index > 0 then
+            Stream.Start_Array (Child.Name);
+            Prev_Value := 0;
+            for I in 1 .. Data.Count loop
+               Value := Data.Data (I).Values (Child.Index);
+               if Value > Prev_Value then
+                  Offset := Long_Long_Integer (Value - Prev_Value);
+               else
+                  Offset := -Long_Long_Integer (Prev_Value - Value);
+               end if;
+               Prev_Value := Value;
+               if Offset < Long_Long_Integer (Integer'Last) and Offset > Long_Long_Integer (Integer'First) then
+                  Stream.Write_Entity (Child.Name, Integer (Offset));
+               else
+                  Stream.Write_Long_Entity (Child.Name, Offset);
+--                 else
+--                    Stream.Write_Entity (Child.Name, Uint64'Image (Value));
+               end if;
+            end loop;
+            Stream.End_Array (Child.Name);
+         end if;
+         Child := Child.Next;
+      end loop;
+      Stream.End_Entity (Node.Name);
+   end Write_Snapshot;
+
 end Helios.Reports;
