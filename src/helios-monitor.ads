@@ -21,7 +21,10 @@ with Helios.Schemas;
 with Helios.Datas;
 package Helios.Monitor is
 
+   type Agent_Type;
+   type Agent_Type_Access is access all Agent_Type'Class;
    type Agent_Type is new Ada.Finalization.Limited_Controlled with record
+      Next : Agent_Type_Access;
       Node : Schemas.Definition_Type_Access;
    end record;
 
@@ -48,5 +51,8 @@ package Helios.Monitor is
    --  Collect the values in the snapshot.
    procedure Collect (Agent  : in out Agent_Type;
                       Values : in out Datas.Snapshot_Type) is null;
+
+   --  Collect the values for each registered plugin.
+   procedure Collect_All (Values : in out Datas.Snapshot_Type);
 
 end Helios.Monitor;
