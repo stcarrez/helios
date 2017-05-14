@@ -22,9 +22,9 @@ package Helios.Monitor.Ifnet is
                       TX_BYTES, TX_PACKETS, TX_ERRS, TX_DROP, TX_FIFO, TX_COLLS,
                       TX_CARRIER, TX_COMPRESSED);
 
-   type Stat_Definition_Array is array (Stat_Type) of Definition_Type_Access;
+   type Stat_Definition_Array is array (Stat_Type) of Schemas.Definition_Type_Access;
 
-   type Interface_Definition_Type is new Definition_Type with record
+   type Interface_Definition_Type is new Schemas.Definition_Type with record
       Stats : Stat_Definition_Array;
    end record;
    type Interface_Definition_Type_Access is access all Interface_Definition_Type'Class;
@@ -38,7 +38,7 @@ package Helios.Monitor.Ifnet is
    --  Collect the values in the snapshot.
    overriding
    procedure Collect (Agent  : in out Agent_Type;
-                      Values : in out Snapshot_Type);
+                      Values : in out Datas.Snapshot_Type);
 
    --  Make a new interface definition for the given interface name.
    procedure Make_Interface (Agent : in out Agent_Type;
