@@ -18,22 +18,22 @@
 package Helios.Monitor.CPU is
 
    type Agent_Type is new Helios.Monitor.Agent_Type with record
-      User_Time       : Definition_Type_Access;
-      Nice_Time       : Definition_Type_Access;
-      Sys_Time        : Definition_Type_Access;
-      Idle_Time       : Definition_Type_Access;
-      Iowait_Time     : Definition_Type_Access;
-      Irq_Time        : Definition_Type_Access;
-      Softirq_Time    : Definition_Type_Access;
-      Steal_Time      : Definition_Type_Access;
-      Guest_Time      : Definition_Type_Access;
-      Guest_Nice_Time : Definition_Type_Access;
-      Ctx_Count       : Definition_Type_Access;
-      Softirq_Count   : Definition_Type_Access;
-      Processes_Count : Definition_Type_Access;
-      Running_Count   : Definition_Type_Access;
-      Blocked_Count   : Definition_Type_Access;
-      Intr_Count      : Definition_Type_Access;
+      User_Time       : Schemas.Definition_Type_Access;
+      Nice_Time       : Schemas.Definition_Type_Access;
+      Sys_Time        : Schemas.Definition_Type_Access;
+      Idle_Time       : Schemas.Definition_Type_Access;
+      Iowait_Time     : Schemas.Definition_Type_Access;
+      Irq_Time        : Schemas.Definition_Type_Access;
+      Softirq_Time    : Schemas.Definition_Type_Access;
+      Steal_Time      : Schemas.Definition_Type_Access;
+      Guest_Time      : Schemas.Definition_Type_Access;
+      Guest_Nice_Time : Schemas.Definition_Type_Access;
+      Ctx_Count       : Schemas.Definition_Type_Access;
+      Softirq_Count   : Schemas.Definition_Type_Access;
+      Processes_Count : Schemas.Definition_Type_Access;
+      Running_Count   : Schemas.Definition_Type_Access;
+      Blocked_Count   : Schemas.Definition_Type_Access;
+      Intr_Count      : Schemas.Definition_Type_Access;
    end record;
 
    --  Start the agent and build the definition tree.
@@ -43,6 +43,6 @@ package Helios.Monitor.CPU is
    --  Collect the values in the snapshot.
    overriding
    procedure Collect (Agent  : in out Agent_Type;
-                      Values : in out Snapshot_Type);
+                      Values : in out Datas.Snapshot_Type);
 
 end Helios.Monitor.CPU;
