@@ -47,7 +47,7 @@ package body Helios.Monitor.CPU is
    --  ------------------------------
    overriding
    procedure Collect (Agent  : in out Agent_Type;
-                      Values : in out Snapshot_Type) is
+                      Values : in out Datas.Snapshot_Type) is
       Line : Helios.Tools.Files.File_Extractor;
    begin
       Line.Open ("/proc/stat");
@@ -55,34 +55,34 @@ package body Helios.Monitor.CPU is
          Line.Read;
          exit when Line.Is_Eof;
          if Line.Is_Field ("cpu") then
-            Set_Value (Values, Agent.User_Time, Line.Get_Value (2));
-            Set_Value (Values, Agent.Nice_Time, Line.Get_Value (3));
-            Set_Value (Values, Agent.Sys_Time, Line.Get_Value (4));
-            Set_Value (Values, Agent.Idle_Time, Line.Get_Value (5));
-            Set_Value (Values, Agent.Iowait_Time, Line.Get_Value (6));
-            Set_Value (Values, Agent.Irq_Time, Line.Get_Value (7));
-            Set_Value (Values, Agent.Softirq_Time, Line.Get_Value (8));
-            Set_Value (Values, Agent.Steal_Time, Line.Get_Value (9));
-            Set_Value (Values, Agent.Guest_Time, Line.Get_Value (10));
-            Set_Value (Values, Agent.Guest_Nice_Time, Line.Get_Value (11));
+            Values.Set_Value (Agent.User_Time, Line.Get_Value (2));
+            Values.Set_Value (Agent.Nice_Time, Line.Get_Value (3));
+            Values.Set_Value (Agent.Sys_Time, Line.Get_Value (4));
+            Values.Set_Value (Agent.Idle_Time, Line.Get_Value (5));
+            Values.Set_Value (Agent.Iowait_Time, Line.Get_Value (6));
+            Values.Set_Value (Agent.Irq_Time, Line.Get_Value (7));
+            Values.Set_Value (Agent.Softirq_Time, Line.Get_Value (8));
+            Values.Set_Value (Agent.Steal_Time, Line.Get_Value (9));
+            Values.Set_Value (Agent.Guest_Time, Line.Get_Value (10));
+            Values.Set_Value (Agent.Guest_Nice_Time, Line.Get_Value (11));
 
          elsif Line.Is_Field ("ctxt") then
-            Set_Value (Values, Agent.Ctx_Count, Line.Get_Value (2));
+            Values.Set_Value (Agent.Ctx_Count, Line.Get_Value (2));
 
          elsif Line.Is_Field ("processes") then
-            Set_Value (Values, Agent.Processes_Count, Line.Get_Value (2));
+            Values.Set_Value (Agent.Processes_Count, Line.Get_Value (2));
 
          elsif Line.Is_Field ("softirq") then
-            Set_Value (Values, Agent.Softirq_Count, Line.Get_Value (2));
+            Values.Set_Value (Agent.Softirq_Count, Line.Get_Value (2));
 
          elsif Line.Is_Field ("procs_running") then
-            Set_Value (Values, Agent.Running_Count, Line.Get_Value (2));
+            Values.Set_Value (Agent.Running_Count, Line.Get_Value (2));
 
          elsif Line.Is_Field ("procs_blocked") then
-            Set_Value (Values, Agent.Blocked_Count, Line.Get_Value (2));
+            Values.Set_Value (Agent.Blocked_Count, Line.Get_Value (2));
 
          elsif Line.Is_Field ("intr") then
-            Set_Value (Values, Agent.Intr_Count, Line.Get_Value (2));
+            Values.Set_Value (Agent.Intr_Count, Line.Get_Value (2));
 
          end if;
       end loop;
