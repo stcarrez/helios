@@ -16,8 +16,6 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 
-with Ada.Finalization;
-
 --  == Schema Definition ==
 --  The <tt>Helios.Schemas</tt> package describes the data schema that describes the data
 --  collected by the monitoring agent.
@@ -51,7 +49,8 @@ package Helios.Schemas is
    --  Add a new definition node to the definition.
    function Create_Definition (Into : in Definition_Type_Access;
                                Name : in String;
-                               Kind : in Value_Type := V_INTEGER) return Definition_Type_Access with
+                               Kind : in Value_Type := V_INTEGER)
+                               return Definition_Type_Access with
      Pre => Kind = V_NONE or else Into /= null;
 
    --  Add a definition to the list.
