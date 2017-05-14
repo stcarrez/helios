@@ -20,9 +20,9 @@ package Helios.Monitor.Disks is
    type Stat_Type is (READS, READ_MERGED, SECTOR_READ, READ_TIME,
                       WRITES, WRITE_MERGED, SECTOR_WRITE, WRITE_TIME);
 
-   type Stat_Definition_Array is array (Stat_Type) of Definition_Type_Access;
+   type Stat_Definition_Array is array (Stat_Type) of Schemas.Definition_Type_Access;
 
-   type Disk_Definition_Type is new Definition_Type with record
+   type Disk_Definition_Type is new Schemas.Definition_Type with record
       Stats : Stat_Definition_Array;
    end record;
    type Disk_Definition_Type_Access is access all Disk_Definition_Type'Class;
@@ -36,7 +36,7 @@ package Helios.Monitor.Disks is
    --  Collect the values in the snapshot.
    overriding
    procedure Collect (Agent  : in out Agent_Type;
-                      Values : in out Snapshot_Type);
+                      Values : in out Datas.Snapshot_Type);
 
    --  Make a new disk definition for the given disk name.
    procedure Make_Disk (Agent : in out Agent_Type;
