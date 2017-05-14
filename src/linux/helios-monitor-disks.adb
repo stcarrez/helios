@@ -38,9 +38,11 @@ package body Helios.Monitor.Disks is
    --  ------------------------------
    overriding
    procedure Collect (Agent  : in out Agent_Type;
-                      Values : in out Snapshot_Type) is
+                      Values : in out Datas.Snapshot_Type) is
+      use type Schemas.Definition_Type_Access;
+
       Line : Helios.Tools.Files.File_Extractor;
-      Node : Definition_Type_Access;
+      Node : Schemas.Definition_Type_Access;
       Disk : Disk_Definition_Type_Access;
    begin
       Line.Open ("/proc/diskstats");
@@ -52,7 +54,7 @@ package body Helios.Monitor.Disks is
          if Node /= null then
             Disk := Disk_Definition_Type'Class (Node.all)'Access;
             for I in Disk.Stats'Range loop
-               Set_Value (Values, Disk.Stats (I), Line.Get_Value (4 + Stat_Type'Pos (I)));
+               Values.Set_Value (Disk.Stats (I), Line.Get_Value (4 + Stat_Type'Pos (I)));
             end loop;
          end if;
       end loop;
@@ -69,8 +71,8 @@ package body Helios.Monitor.Disks is
       Disk.Name := Name;
       Agent.Add_Definition (Disk.all'Access);
       for I in Disk.Stats'Range loop
-         Disk.Stats (I) := Create_Definition (Disk.all'Access,
-                                              To_Lower_Case (Stat_Type'Image (I)));
+         Disk.Stats (I) := Schemas.Create_Definition (Disk.all'Access,
+                                                      To_Lower_Case (Stat_Type'Image (I)));
       end loop;
    end Make_Disk;
 
