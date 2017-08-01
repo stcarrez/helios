@@ -15,8 +15,13 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
+with Ada.IO_Exceptions;
+with Ada.Command_Line;
+with Util.Log.Loggers;
 with Helios.Commands.Info;
 package body Helios.Commands is
+
+   Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Commands");
 
    Help_Command    : aliased Helios.Commands.Drivers.Help_Command_Type;
    Info_Command    : aliased Helios.Commands.Info.Command_Type;
@@ -34,5 +39,20 @@ package body Helios.Commands is
       Driver.Add_Command ("help", Help_Command'Access);
       Driver.Add_Command ("info", Info_Command'Access);
    end Initialize;
+
+   --  ------------------------------
+   --  Load the configuration context from the configuration file.
+   --  ------------------------------
+   procedure Load (Context : in out Context_Type) is
+      Path : constant String := Ada.Strings.Unbounded.To_String (Context.Config_Path);
+   begin
+      Context.Config.Load_Properties (Path);
+
+   exception
+      when Ada.IO_Exceptions.Name_Error =>
+         Log.Error ("Configuration file '{0}' does not exist.", Path);
+         Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
+
+   end Load;
 
 end Helios.Commands;
