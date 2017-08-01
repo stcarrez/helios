@@ -48,7 +48,8 @@ package Helios.Monitor is
                        Config : in Util.Properties.Manager);
 
    --  Start the agent and build the definition tree.
-   procedure Start (Agent : in out Agent_Type) is null;
+   procedure Start (Agent  : in out Agent_Type;
+                    Config : in Util.Properties.Manager) is null;
 
    --  Collect the values in the snapshot.
    procedure Collect (Agent  : in out Agent_Type;
