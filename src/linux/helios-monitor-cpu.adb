@@ -22,7 +22,8 @@ package body Helios.Monitor.CPU is
    --  Start the agent and build the definition tree.
    --  ------------------------------
    overriding
-   procedure Start (Agent : in out Agent_Type) is
+   procedure Start (Agent  : in out Agent_Type;
+                    Config : in Util.Properties.Manager) is
    begin
       Agent.User_Time := Agent.Create_Definition ("user");
       Agent.Nice_Time := Agent.Create_Definition ("nice");
