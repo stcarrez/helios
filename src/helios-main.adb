@@ -19,6 +19,7 @@ with Ada.Exceptions;
 with Ada.Text_IO;
 with Ada.Command_Line;
 with Ada.Strings.Unbounded;
+with Ada.IO_Exceptions;
 with GNAT.Command_Line;
 
 with Util.Log.loggers;
@@ -46,11 +47,11 @@ procedure Helios.Main is
    Verbose     : Boolean := False;
    First       : Natural := 0;
    All_Args    : Util.Commands.Default_Argument_List (0);
-   Config      : Ada.Strings.Unbounded.Unbounded_String;
    Ctx         : Helios.Commands.Context_Type;
    Mon         : Helios.Monitor.CPU.Agent_Type;
    Ifnet_Mon   : Helios.Monitor.Ifnet.Agent_Type;
    Disk_Mon    : Helios.Monitor.Disks.Agent_Type;
+
 begin
    Log_Config.Set ("log4j.rootCategory", "DEBUG,console");
    Log_Config.Set ("log4j.appender.console", "Console");
@@ -72,7 +73,7 @@ begin
             exit;
 
          when 'c' =>
-            Config := Ada.Strings.Unbounded.To_Unbounded_String (Parameter);
+            Ctx.Config_Path := Ada.Strings.Unbounded.To_Unbounded_String (Parameter);
 
          when 'd' =>
             Debug := True;
@@ -91,7 +92,7 @@ begin
    if Verbose or Debug then
       Log_Config.Set ("log4j.appender.console.level", "INFO");
       Log_Config.Set ("log4j.logger.Util", "WARN");
-      Log_Config.Set ("log4j.logger.Bbox", "ERR");
+      Log_Config.Set ("log4j.logger.Helios", "ERR");
    end if;
    if Debug then
       Log_Config.Set ("log4j.appender.console.level", "DEBUG");
@@ -104,6 +105,7 @@ begin
       Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
       return;
    end if;
+
    Helios.Monitor.Register (Mon, "cpu");
    Helios.Monitor.Register (Ifnet_Mon, "ifnet");
    Helios.Monitor.Register (Disk_Mon, "disks");
