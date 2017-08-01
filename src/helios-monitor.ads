@@ -17,6 +17,7 @@
 -----------------------------------------------------------------------
 
 with Ada.Finalization;
+with Util.Properties;
 with Helios.Schemas;
 with Helios.Datas;
 package Helios.Monitor is
@@ -42,8 +43,9 @@ package Helios.Monitor is
                              Name  : in String) return Schemas.Definition_Type_Access;
 
    --  Register the agent.
-   procedure Register (Agent : in out Agent_Type'Class;
-                       Name  : in String);
+   procedure Register (Agent  : in out Agent_Type'Class;
+                       Name   : in String;
+                       Config : in Util.Properties.Manager);
 
    --  Start the agent and build the definition tree.
    procedure Start (Agent : in out Agent_Type) is null;
