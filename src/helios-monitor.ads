@@ -17,17 +17,27 @@
 -----------------------------------------------------------------------
 
 with Ada.Finalization;
+with Ada.Real_Time;
 with Util.Properties;
+with Util.Events.Timers;
 with Helios.Schemas;
 with Helios.Datas;
 package Helios.Monitor is
 
    type Agent_Type;
    type Agent_Type_Access is access all Agent_Type'Class;
-   type Agent_Type is new Ada.Finalization.Limited_Controlled with record
-      Next : Agent_Type_Access;
-      Node : Schemas.Definition_Type_Access;
+   type Agent_Type is new Ada.Finalization.Limited_Controlled
+     and Util.Events.Timers.Timer with record
+      Next   : Agent_Type_Access;
+      Index  : Helios.Schemas.Monitor_Index;
+      Node   : Schemas.Definition_Type_Access;
+      Period : Ada.Real_Time.Time_Span;
    end record;
+
+   --  The timer handler executed when the timer deadline has passed.
+   overriding
+   procedure Time_Handler (Agent : in out Agent_Type;
+                           Event : in out Util.Events.Timers.Timer_Ref'Class);
 
    --  Create a new definition with the given name.
    function Create_Definition (Agent : in Agent_Type;
