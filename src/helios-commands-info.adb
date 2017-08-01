@@ -17,7 +17,7 @@
 -----------------------------------------------------------------------
 
 with Helios.Datas;
-with Helios.Monitor;
+with Helios.Monitor.Agent;
 with Helios.Schemas;
 with Helios.Reports.Files;
 package body Helios.Commands.Info is
@@ -30,6 +30,8 @@ package body Helios.Commands.Info is
                       Context   : in out Context_Type) is
       Data        : Helios.Datas.Snapshot_Queue_Type (Max_Count => 1000);
    begin
+      Load (Context);
+      Monitor.Agent.Configure (Context.Config);
       for I in Data.Data'Range loop
          Helios.Datas.Initialize (Data.Data (I));
          Helios.Monitor.Collect_All (Data.Data (I));
