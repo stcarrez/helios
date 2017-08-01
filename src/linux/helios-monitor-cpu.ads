@@ -38,7 +38,8 @@ package Helios.Monitor.CPU is
 
    --  Start the agent and build the definition tree.
    overriding
-   procedure Start (Agent : in out Agent_Type);
+   procedure Start (Agent  : in out Agent_Type;
+                    Config : in Util.Properties.Manager);
 
    --  Collect the values in the snapshot.
    overriding
