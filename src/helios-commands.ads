@@ -38,4 +38,7 @@ package Helios.Commands is
    --  Initialize the commands.
    procedure Initialize;
 
+   --  Load the configuration context from the configuration file.
+   procedure Load (Context : in out Context_Type);
+
 end Helios.Commands;
