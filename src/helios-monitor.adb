@@ -56,8 +56,9 @@ package body Helios.Monitor is
    --  ------------------------------
    --  Register the agent.
    --  ------------------------------
-   procedure Register (Agent : in out Agent_Type'Class;
-                       Name  : in String) is
+   procedure Register (Agent  : in out Agent_Type'Class;
+                       Name   : in String;
+                       Config : in Util.Properties.Manager) is
    begin
       Agent.Next := List;
       List := Agent'Unchecked_Access;
