@@ -15,14 +15,19 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
+with Ada.Strings.Unbounded;
 with Util.Commands.Drivers;
+with Util.Properties;
 with Util.Commands.Consoles;
 with Util.Commands.Consoles.Text;
 package Helios.Commands is
 
    subtype Argument_List is Util.Commands.Argument_List;
 
-   type Context_Type is limited null record;
+   type Context_Type is limited record
+      Config_Path : Ada.Strings.Unbounded.Unbounded_String;
+      Config      : Util.Properties.Manager;
+   end record;
 
    package Drivers is
      new Util.Commands.Drivers (Context_Type => Context_Type,
