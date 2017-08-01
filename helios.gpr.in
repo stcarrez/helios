@@ -10,7 +10,13 @@ project Helios is
    for Exec_Dir use "./" & Config'Exec_Dir & "/bin";
 
    package Binder renames Config.Binder;
-   package Builder renames Config.Builder;
+
+   package Builder is
+      for Default_Switches ("Ada") use
+         Config.Builder'Default_Switches ("Ada");
+      for Executable ("helios-main.adb") use "helios";
+   end Builder;
+
    package Compiler renames Config.Compiler;
    package Linker renames Config.Linker;
 
