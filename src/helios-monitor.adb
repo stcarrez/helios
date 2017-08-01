@@ -21,6 +21,16 @@ package body Helios.Monitor is
    List : Agent_Type_Access;
 
    --  ------------------------------
+   --  The timer handler executed when the timer deadline has passed.
+   --  ------------------------------
+   overriding
+   procedure Time_Handler (Agent : in out Agent_Type;
+                           Event : in out Util.Events.Timers.Timer_Ref'Class) is
+   begin
+      Event.Repeat (Agent.Period);
+   end Time_Handler;
+
+   --  ------------------------------
    --  Create a new definition with the given name.
    --  ------------------------------
    function Create_Definition (Agent : in Agent_Type;
