@@ -63,7 +63,7 @@ package body Helios.Monitor is
       Agent.Next := List;
       List := Agent'Unchecked_Access;
       Agent.Node := Schemas.Create_Definition (null, Name, Schemas.V_NONE);
-      Agent.Start;
+      Agent.Start (Config);
    end Register;
 
    --  ------------------------------
