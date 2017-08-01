@@ -28,9 +28,6 @@ with Util.Streams.Texts;
 with Util.Streams.Buffered;
 with Util.Serialize.IO.JSON;
 with Util.Commands;
-with Helios.Monitor.CPU;
-with Helios.Monitor.Ifnet;
-with Helios.Monitor.Disks;
 with Helios.Reports;
 with Helios.Schemas;
 with Helios.Datas;
@@ -48,10 +45,6 @@ procedure Helios.Main is
    First       : Natural := 0;
    All_Args    : Util.Commands.Default_Argument_List (0);
    Ctx         : Helios.Commands.Context_Type;
-   Mon         : Helios.Monitor.CPU.Agent_Type;
-   Ifnet_Mon   : Helios.Monitor.Ifnet.Agent_Type;
-   Disk_Mon    : Helios.Monitor.Disks.Agent_Type;
-
 begin
    Log_Config.Set ("log4j.rootCategory", "DEBUG,console");
    Log_Config.Set ("log4j.appender.console", "Console");
@@ -106,9 +99,6 @@ begin
       return;
    end if;
 
-   Helios.Monitor.Register (Mon, "cpu");
-   Helios.Monitor.Register (Ifnet_Mon, "ifnet");
-   Helios.Monitor.Register (Disk_Mon, "disks");
    declare
       Cmd_Name : constant String := Full_Switch;
       Args     : Util.Commands.Default_Argument_List (First + 1);
