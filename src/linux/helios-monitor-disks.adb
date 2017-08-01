@@ -25,7 +25,8 @@ package body Helios.Monitor.Disks is
    --  Start the agent and build the definition tree.
    --  ------------------------------
    overriding
-   procedure Start (Agent : in out Agent_Type) is
+   procedure Start (Agent  : in out Agent_Type;
+                    Config : in Util.Properties.Manager) is
    begin
       Make_Disk (Agent, "sda");
       Make_Disk (Agent, "sdb");
