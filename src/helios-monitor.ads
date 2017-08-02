@@ -70,9 +70,6 @@ package Helios.Monitor is
    procedure Collect (Agent  : in out Agent_Type;
                       Values : in out Datas.Snapshot_Type) is null;
 
-   --  Collect the values for each registered plugin.
-   procedure Collect_All (Values : in out Datas.Snapshot_Type);
-
    --  Get a period configuration parameter.
    function Get_Period (Config  : in Util.Properties.Manager;
                         Name    : in String;
