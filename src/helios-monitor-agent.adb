@@ -21,21 +21,9 @@ with Helios.Monitor.Disks;
 
 package body Helios.Monitor.Agent is
 
-   Cpu_Mon     : Helios.Monitor.CPU.Agent_Type;
-   Ifnet_Mon   : Helios.Monitor.Ifnet.Agent_Type;
-   Disk_Mon    : Helios.Monitor.Disks.Agent_Type;
-
-   procedure Configure (Name   : in String;
-                        Config : in Util.Properties.Manager) is
-   begin
-      if Name = "ifnet" then
-         Register (Ifnet_Mon, Name, Config);
-      elsif Name = "cpu" then
-         Register (Cpu_Mon, Name, Config);
-      elsif Name = "disks" then
-         Register (Disk_Mon, Name, Config);
-      end if;
-   end Configure;
+   Cpu_Mon     : aliased Helios.Monitor.CPU.Agent_Type;
+   Ifnet_Mon   : aliased Helios.Monitor.Ifnet.Agent_Type;
+   Disk_Mon    : aliased Helios.Monitor.Disks.Agent_Type;
 
    --  ------------------------------
    --  Configure the agent plugins.
@@ -44,6 +32,22 @@ package body Helios.Monitor.Agent is
                         Config  : in Util.Properties.Manager) is
       procedure Process (Name  : in String;
                          Value : in Util.Properties.Value);
+
+      procedure Configure (Name   : in String;
+                           Config : in Util.Properties.Manager) is
+         Agent : Agent_Type_Access;
+      begin
+         if Name = "ifnet" then
+            Agent := Ifnet_Mon'Access;
+         elsif Name = "cpu" then
+            Agent := Cpu_Mon'Access;
+         elsif Name = "disks" then
+            Agent := Disk_Mon'Access;
+         end if;
+         if Agent /= null then
+            Register (Agent, Name, Config);
+         end if;
+      end Configure;
 
       --  Identify monitor plugins and configure them.
       procedure Process (Name  : in String;
