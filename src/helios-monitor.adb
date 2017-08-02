@@ -93,6 +93,19 @@ package body Helios.Monitor is
    end Collect_All;
 
    --  ------------------------------
+   --  Iterate over the plugin agents that are registered and execute
+   --  the <tt>Process</tt> procedure.
+   --  ------------------------------
+   procedure Iterate (Process : not null access procedure (Agent : in out Agent_Type'Class)) is
+      Agent : Agent_Type_Access := List;
+   begin
+      while Agent /= null loop
+         Process (Agent.all);
+         Agent := Agent.Next;
+      end loop;
+   end Initialize_Queues;
+
+   --  ------------------------------
    --  Get a period configuration parameter.
    --  ------------------------------
    function Get_Period (Config  : in Util.Properties.Manager;
