@@ -15,12 +15,23 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Ada.Real_Time;
 package body Helios.Reports is
 
    use type Uint64;
    use type Helios.Schemas.Value_Index;
    use type Helios.Schemas.Definition_Type_Access;
+   use type Ada.Real_Time.Time;
+
+   procedure Write_Timestamp (Stream : in out Util.Serialize.IO.Output_Stream'Class;
+                              Name   : in String;
+                              Time   : in Ada.Real_Time.Time) is
+      Seconds : Ada.Real_Time.Seconds_Count;
+      Remain  : Ada.Real_Time.Time_Span;
+   begin
+      Ada.Real_Time.Split (Time, Seconds, Remain);
+      Stream.Write_Long_Entity (Name, Long_Long_Integer (Seconds));
+   end Write_Timestamp;
 
    --  ------------------------------
    --  Write the collected snapshot in the IO stream.  The output stream can be an XML
@@ -37,6 +48,9 @@ package body Helios.Reports is
       Count      : Helios.Datas.Value_Array_Index := Data.Schema.Index;
    begin
       Stream.Start_Entity (Node.Name);
+      Stream.Write_Entity ("period", 10);
+      Write_Timestamp (Stream, "timestamp", Data.Start_Time);
+      Stream.Start_Entity ("snapshot");
       Child := Node.Child;
       while Child /= null loop
          if Child.Child /= null then
@@ -45,7 +59,7 @@ package body Helios.Reports is
             Stream.Start_Array (Child.Name);
             Prev_Value := 0;
             Pos := Child.Index;
-            for I in 1 .. Count loop
+            while pos < Data.Offset loop
                Value := Data.Values (Pos);
                Pos := Pos + Count;
                if Value > Prev_Value then
@@ -66,6 +80,7 @@ package body Helios.Reports is
          end if;
          Child := Child.Next;
       end loop;
+      Stream.End_Entity ("snapshot");
       Stream.End_Entity (Node.Name);
    end Write_Snapshot;
 
