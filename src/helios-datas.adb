@@ -41,6 +41,7 @@ package body Helios.Datas is
       Result.Schema := Queue.Schema;
       Result.Offset := 0;
       Result.Values := new Value_Array (1 .. Count);
+      Result.Values.all := (others => 0);
       Result.Start_Time := Ada.Real_Time.Clock;
       return Result;
    end Allocate;
