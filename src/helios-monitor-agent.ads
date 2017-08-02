@@ -19,7 +19,8 @@
 package Helios.Monitor.Agent is
 
    type Runtime_Type is limited record
-      Timers : Util.Events.Timers.Timer_List;
+      Timers        : Util.Events.Timers.Timer_List;
+      Report_Period : Ada.Real_Time.Time_Span;
    end record;
 
    --  Configure the agent plugins.
