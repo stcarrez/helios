@@ -50,9 +50,10 @@ package Helios.Schemas is
    function Get_Count return Value_Index;
 
    --  Add a new definition node to the definition.
-   function Create_Definition (Into  : in Definition_Type_Access;
-                               Name  : in String;
-                               Kind  : in Value_Type := V_INTEGER)
+   function Create_Definition (Into   : in Definition_Type_Access;
+                               Name   : in String;
+                               Filter : in String := "*";
+                               Kind   : in Value_Type := V_INTEGER)
                                return Definition_Type_Access with
      Pre => Kind = V_NONE or else Into /= null;
 
