@@ -24,23 +24,24 @@ package body Helios.Monitor.CPU is
    overriding
    procedure Start (Agent  : in out Agent_Type;
                     Config : in Util.Properties.Manager) is
+      Values : constant String := Config.Get ("values");
    begin
-      Agent.User_Time := Agent.Create_Definition ("user");
-      Agent.Nice_Time := Agent.Create_Definition ("nice");
-      Agent.Sys_Time := Agent.Create_Definition ("system");
-      Agent.Idle_Time := Agent.Create_Definition ("idle");
-      Agent.Iowait_Time := Agent.Create_Definition ("iowait");
-      Agent.Irq_Time := Agent.Create_Definition ("irq");
-      Agent.Softirq_Time := Agent.Create_Definition ("softirq");
-      Agent.Steal_Time := Agent.Create_Definition ("steal");
-      Agent.Guest_Time := Agent.Create_Definition ("guest");
-      Agent.Guest_Nice_Time := Agent.Create_Definition ("guest_nice");
-      Agent.Ctx_Count := Agent.Create_Definition ("context");
-      Agent.Processes_Count := Agent.Create_Definition ("processes");
-      Agent.Blocked_Count := Agent.Create_Definition ("procs_blocked");
-      Agent.Running_Count := Agent.Create_Definition ("procs_running");
-      Agent.Softirq_Count := Agent.Create_Definition ("softirq_count");
-      Agent.Intr_Count := Agent.Create_Definition ("intr");
+      Agent.User_Time := Agent.Create_Definition ("user", Values);
+      Agent.Nice_Time := Agent.Create_Definition ("nice", Values);
+      Agent.Sys_Time := Agent.Create_Definition ("system", Values);
+      Agent.Idle_Time := Agent.Create_Definition ("idle", Values);
+      Agent.Iowait_Time := Agent.Create_Definition ("iowait", Values);
+      Agent.Irq_Time := Agent.Create_Definition ("irq", Values);
+      Agent.Softirq_Time := Agent.Create_Definition ("softirq", Values);
+      Agent.Steal_Time := Agent.Create_Definition ("steal", Values);
+      Agent.Guest_Time := Agent.Create_Definition ("guest", Values);
+      Agent.Guest_Nice_Time := Agent.Create_Definition ("guest_nice", Values);
+      Agent.Ctx_Count := Agent.Create_Definition ("context", Values);
+      Agent.Processes_Count := Agent.Create_Definition ("processes", Values);
+      Agent.Blocked_Count := Agent.Create_Definition ("procs_blocked", Values);
+      Agent.Running_Count := Agent.Create_Definition ("procs_running", Values);
+      Agent.Softirq_Count := Agent.Create_Definition ("softirq_count", Values);
+      Agent.Intr_Count := Agent.Create_Definition ("intr", Values);
    end Start;
 
    --  ------------------------------
