@@ -27,12 +27,17 @@ package body Helios.Monitor.Disks is
    overriding
    procedure Start (Agent  : in out Agent_Type;
                     Config : in Util.Properties.Manager) is
-      Values : constant String := Config.Get ("values");
+      Values : constant String := Config.Get ("values", "*");
+      Disks  : constant String := Config.Get ("partitions", "*");
+      Line   : Helios.Tools.Files.File_Extractor;
    begin
-      Make_Disk (Agent, "sda", Values);
-      Make_Disk (Agent, "sdb", Values);
-      Make_Disk (Agent, "sdc", Values);
-      Make_Disk (Agent, "sdd", Values);
+      Line.Open ("/proc/diskstats");
+      Line.Name_Pos := 3;
+      loop
+         Line.Read;
+         exit when Line.Is_Eof;
+         Make_Disk (Agent, Line.Get_Value (3), Disks, Values);
+      end loop;
    end Start;
 
    --  ------------------------------
@@ -67,10 +72,14 @@ package body Helios.Monitor.Disks is
    --  ------------------------------
    procedure Make_Disk (Agent  : in out Agent_Type;
                         Name   : in String;
+                        Disks  : in String;
                         Filter : in String) is
-      Disk : constant Disk_Definition_Type_Access
-        := new Disk_Definition_Type (Len => Name'Length);
+      Disk : Disk_Definition_Type_Access;
    begin
+      if not Helios.Schemas.Is_Filter_Enable (Name, Disks) then
+         return;
+      end if;
+      Disk := new Disk_Definition_Type (Len => Name'Length);
       Disk.Name := Name;
       Agent.Add_Definition (Disk.all'Access);
       for I in Disk.Stats'Range loop
