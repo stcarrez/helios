@@ -18,6 +18,9 @@
 
 package body Helios.Datas is
 
+   use type Schemas.Definition_Type_Access;
+   use type Schemas.Value_Index;
+
    --  ------------------------------
    --  Initialize the snapshot.
    --  ------------------------------
@@ -27,17 +30,39 @@ package body Helios.Datas is
    end Initialize;
 
    --  ------------------------------
+   --  Initialize the snapshot queue for the schema.
+   --  ------------------------------
+   procedure Initialize (Queue  : in out Snapshot_Queue_Type;
+                         Schema : in Helios.Schemas.Definition_Type_Access;
+                         Count  : in Positive) is
+   begin
+      Queue.Schema := Schema;
+      Queue.Count  := Count;
+   end Initialize;
+
+   --  ------------------------------
    --  Set the value in the snapshot.
    --  ------------------------------
    procedure Set_Value (Into  : in out Snapshot_Type;
                         Def   : in Schemas.Definition_Type_Access;
                         Value : in Uint64) is
-      use type Schemas.Definition_Type_Access;
-      use type Schemas.Value_Index;
    begin
       if Def /= null and then Def.Index > 0 then
          Into.Values (Def.Index + Into.Offset) := Value;
       end if;
    end Set_Value;
+
+   --  ------------------------------
+   --  Prepare the snapshot queue to collect new values.
+   --  ------------------------------
+   procedure Prepare (Queue    : in out Snapshot_Queue_Type;
+                      Snapshot : out Snapshot_Type_Access) is
+   begin
+      Snapshot := Queue.Current;
+      Snapshot.Offset := Snapshot.Offset + Queue.Schema.Index;
+      if Snapshot.Offset > Snapshot.Values'Last then
+         null; --  Freeze (Snapshot);
+      end if;
+   end Prepare;
 
 end Helios.Datas;
