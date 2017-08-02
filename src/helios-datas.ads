@@ -79,7 +79,7 @@ package Helios.Datas is
    end record;
 
    type Report_Queue_Type is limited record
-      Snapshot : Snapshot_Queue_Access;
+      Snapshot : Snapshot_Type_Access;
    end record;
 
 end Helios.Datas;
