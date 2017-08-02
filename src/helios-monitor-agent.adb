@@ -36,6 +36,7 @@ package body Helios.Monitor.Agent is
       procedure Configure (Name   : in String;
                            Config : in Util.Properties.Manager) is
          Agent : Agent_Type_Access;
+         Timer : Util.Events.Timers.Timer_Ref;
       begin
          if Name = "ifnet" then
             Agent := Ifnet_Mon'Access;
@@ -46,6 +47,7 @@ package body Helios.Monitor.Agent is
          end if;
          if Agent /= null then
             Register (Agent, Name, Config);
+            Runtime.Timers.Set_Timer (Agent.all'Access, Timer, Agent.Period);
          end if;
       end Configure;
 
