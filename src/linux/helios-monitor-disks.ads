@@ -40,7 +40,8 @@ package Helios.Monitor.Disks is
                       Values : in out Datas.Snapshot_Type);
 
    --  Make a new disk definition for the given disk name.
-   procedure Make_Disk (Agent : in out Agent_Type;
-                        Name  : in String);
+   procedure Make_Disk (Agent  : in out Agent_Type;
+                        Name   : in String;
+                        Filter : in String);
 
 end Helios.Monitor.Disks;
