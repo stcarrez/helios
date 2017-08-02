@@ -26,7 +26,10 @@ package body Helios.Monitor is
    overriding
    procedure Time_Handler (Agent : in out Agent_Type;
                            Event : in out Util.Events.Timers.Timer_Ref'Class) is
+      Data : Helios.Datas.Snapshot_Type_Access;
    begin
+      Helios.Datas.Prepare (Agent.Data.all, Data);
+      Agent_Type'Class (Agent).Collect (Data.all);
       Event.Repeat (Agent.Period);
    end Time_Handler;
 
