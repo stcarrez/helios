@@ -15,11 +15,13 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Util.Log.Loggers;
 package body Helios.Datas is
 
    use type Schemas.Definition_Type_Access;
    use type Schemas.Value_Index;
+
+   Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Datas");
 
    Reports : Report_Queue_Type;
 
@@ -35,6 +37,7 @@ package body Helios.Datas is
       Result : Snapshot_Type_Access := new Snapshot_Type;
       Count  : Value_Array_Index := Queue.Schema.Index * Value_Array_Index (Queue.Count);
    begin
+      Log.Info ("Allocate snapshot with {0} values", Value_Array_Index'Image (Count));
       Result.Schema := Queue.Schema;
       Result.Offset := 0;
       Result.Values := new Value_Array (1 .. Count);
@@ -48,6 +51,8 @@ package body Helios.Datas is
                          Schema : in Helios.Schemas.Definition_Type_Access;
                          Count  : in Positive) is
    begin
+      Log.Info ("Initialize schema queue {0} with {1} values",
+                Schema.Name, Positive'Image (Count));
       Queue.Schema := Schema;
       Queue.Count  := Count;
       Queue.Current := Allocate (Queue);
@@ -73,7 +78,7 @@ package body Helios.Datas is
    begin
       Snapshot := Queue.Current;
       Snapshot.Offset := Snapshot.Offset + Queue.Schema.Index;
-      if Snapshot.Offset > Snapshot.Values'Last then
+      if Snapshot.Offset >= Snapshot.Values'Last then
          Snapshot.Next := Reports.Snapshot;
          Reports.Snapshot := Snapshot;
          Queue.Current := Allocate (Queue);
