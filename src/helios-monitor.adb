@@ -15,7 +15,6 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with Ada.Strings.Fixed;
 with Util.Properties.Basic;
 with Util.Log.Loggers;
 package body Helios.Monitor is
@@ -95,18 +94,6 @@ package body Helios.Monitor is
          List := Agent;
       end if;
    end Register;
-
-   --  ------------------------------
-   --  Collect the values for each registered plugin.
-   --  ------------------------------
-   procedure Collect_All (Values : in out Datas.Snapshot_Type) is
-      Agent : Agent_Type_Access := List;
-   begin
-      while Agent /= null loop
-         Agent.Collect (Values);
-         Agent := Agent.Next;
-      end loop;
-   end Collect_All;
 
    --  ------------------------------
    --  Iterate over the plugin agents that are registered and execute
