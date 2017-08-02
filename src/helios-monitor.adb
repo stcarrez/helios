@@ -16,7 +16,10 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Util.Properties.Basic;
+with Util.Log.Loggers;
 package body Helios.Monitor is
+
+   Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Monitor");
 
    List : Agent_Type_Access;
 
@@ -28,7 +31,9 @@ package body Helios.Monitor is
                            Event : in out Util.Events.Timers.Timer_Ref'Class) is
       Data : Helios.Datas.Snapshot_Type_Access;
    begin
-      Helios.Datas.Prepare (Agent.Data.all, Data);
+      Log.Debug ("Running agent {0}", Agent.Node.Name);
+
+      Helios.Datas.Prepare (Agent.Data, Data);
       Agent_Type'Class (Agent).Collect (Data.all);
       Event.Repeat (Agent.Period);
    end Time_Handler;
@@ -73,6 +78,8 @@ package body Helios.Monitor is
                        Name   : in String;
                        Config : in Util.Properties.Manager) is
    begin
+      Log.Info ("Register agent {0}", Name);
+
       Agent.Period := Get_Period (Config, "period", 1);
       Agent.Next := List;
       List := Agent;
@@ -103,7 +110,7 @@ package body Helios.Monitor is
          Process (Agent.all);
          Agent := Agent.Next;
       end loop;
-   end Initialize_Queues;
+   end Iterate;
 
    --  ------------------------------
    --  Get a period configuration parameter.
