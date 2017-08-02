@@ -41,6 +41,7 @@ package body Helios.Datas is
       Result.Schema := Queue.Schema;
       Result.Offset := 0;
       Result.Values := new Value_Array (1 .. Count);
+      Result.Start_Time := Ada.Real_Time.Clock;
       return Result;
    end Allocate;
 
@@ -82,8 +83,14 @@ package body Helios.Datas is
          Snapshot.Next := Reports.Snapshot;
          Reports.Snapshot := Snapshot;
          Queue.Current := Allocate (Queue);
+         Snapshot.End_Time := Queue.Current.Start_Time;
          Snapshot := Queue.Current;
       end if;
    end Prepare;
+
+   function Get_Report return Report_Queue_Type is
+   begin
+      return Reports;
+   end Get_Report;
 
 end Helios.Datas;
