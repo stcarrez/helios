@@ -42,8 +42,9 @@ package Helios.Monitor.Ifnet is
                       Values : in out Datas.Snapshot_Type);
 
    --  Make a new interface definition for the given interface name.
-   procedure Make_Interface (Agent  : in out Agent_Type;
-                             Name   : in String;
-                             Filter : in String);
+   procedure Make_Interface (Agent      : in out Agent_Type;
+                             Name       : in String;
+                             Interfaces : in String;
+                             Filter     : in String);
 
 end Helios.Monitor.Ifnet;
