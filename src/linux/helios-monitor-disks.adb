@@ -27,11 +27,12 @@ package body Helios.Monitor.Disks is
    overriding
    procedure Start (Agent  : in out Agent_Type;
                     Config : in Util.Properties.Manager) is
+      Values : constant String := Config.Get ("values");
    begin
-      Make_Disk (Agent, "sda");
-      Make_Disk (Agent, "sdb");
-      Make_Disk (Agent, "sdc");
-      Make_Disk (Agent, "sdd");
+      Make_Disk (Agent, "sda", Values);
+      Make_Disk (Agent, "sdb", Values);
+      Make_Disk (Agent, "sdc", Values);
+      Make_Disk (Agent, "sdd", Values);
    end Start;
 
    --  ------------------------------
@@ -64,8 +65,9 @@ package body Helios.Monitor.Disks is
    --  ------------------------------
    --  Make a new disk definition for the given disk name.
    --  ------------------------------
-   procedure Make_Disk (Agent : in out Agent_Type;
-                        Name  : in String) is
+   procedure Make_Disk (Agent  : in out Agent_Type;
+                        Name   : in String;
+                        Filter : in String) is
       Disk : constant Disk_Definition_Type_Access
         := new Disk_Definition_Type (Len => Name'Length);
    begin
@@ -73,7 +75,8 @@ package body Helios.Monitor.Disks is
       Agent.Add_Definition (Disk.all'Access);
       for I in Disk.Stats'Range loop
          Disk.Stats (I) := Schemas.Create_Definition (Disk.all'Access,
-                                                      To_Lower_Case (Stat_Type'Image (I)));
+                                                      To_Lower_Case (Stat_Type'Image (I)),
+                                                      Filter);
       end loop;
    end Make_Disk;
 
