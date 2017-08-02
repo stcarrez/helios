@@ -29,40 +29,12 @@ package body Helios.Reports is
    procedure Write_Snapshot (Stream : in out Util.Serialize.IO.Output_Stream'Class;
                              Data   : in Helios.Datas.Snapshot_Type;
                              Node   : in Helios.Schemas.Definition_Type_Access) is
-      Child : Helios.Schemas.Definition_Type_Access;
-      Value : Uint64;
-   begin
-      Stream.Start_Entity (Node.Name);
-      Child := Node.Child;
-      while Child /= null loop
-         if Child.Child /= null then
-            Write_Snapshot (Stream, Data, Child);
-         elsif Child.Index > 0 then
-            Value := Data.Values (Child.Index);
-            if Value < Uint64 (Integer'Last) then
-               Stream.Write_Entity (Child.Name, Integer (Value));
-            elsif Value < Uint64 (Long_Long_Integer'Last) then
-               Stream.Write_Long_Entity (Child.Name, Long_Long_Integer (Value));
-            else
-               Stream.Write_Entity (Child.Name, Uint64'Image (Value));
-            end if;
-         end if;
-         Child := Child.Next;
-      end loop;
-      Stream.End_Entity (Node.Name);
-   end Write_Snapshot;
-
-   --  ------------------------------
-   --  Write the collected snapshot in the IO stream.  The output stream can be an XML
-   --  or a JSON stream.  The node definition is used for the structure of the output content.
-   --  ------------------------------
-   procedure Write_Snapshot (Stream : in out Util.Serialize.IO.Output_Stream'Class;
-                             Data   : in Helios.Datas.Snapshot_Queue_Type;
-                             Node   : in Helios.Schemas.Definition_Type_Access) is
       Child      : Helios.Schemas.Definition_Type_Access;
       Value      : Uint64;
       Prev_Value : Uint64;
       Offset     : Long_Long_Integer;
+      Pos        : Helios.Datas.Value_Array_Index;
+      Count      : Helios.Datas.Value_Array_Index := Data.Schema.Index;
    begin
       Stream.Start_Entity (Node.Name);
       Child := Node.Child;
@@ -72,8 +44,10 @@ package body Helios.Reports is
          elsif Child.Index > 0 then
             Stream.Start_Array (Child.Name);
             Prev_Value := 0;
-            for I in 1 .. Data.Count loop
-               Value := Data.Data (I).Values (Child.Index);
+            Pos := Child.Index;
+            for I in 1 .. Count loop
+               Value := Data.Values (Pos);
+               Pos := Pos + Count;
                if Value > Prev_Value then
                   Offset := Long_Long_Integer (Value - Prev_Value);
                else
