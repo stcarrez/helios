@@ -25,6 +25,10 @@ package body Helios.Reports is
 
    procedure Write_Timestamp (Stream : in out Util.Serialize.IO.Output_Stream'Class;
                               Name   : in String;
+                              Time   : in Ada.Real_Time.Time);
+
+   procedure Write_Timestamp (Stream : in out Util.Serialize.IO.Output_Stream'Class;
+                              Name   : in String;
                               Time   : in Ada.Real_Time.Time) is
       Seconds : Ada.Real_Time.Seconds_Count;
       Remain  : Ada.Real_Time.Time_Span;
@@ -45,7 +49,7 @@ package body Helios.Reports is
       Prev_Value : Uint64;
       Offset     : Long_Long_Integer;
       Pos        : Helios.Datas.Value_Array_Index;
-      Count      : Helios.Datas.Value_Array_Index := Data.Schema.Index;
+      Count      : constant Helios.Datas.Value_Array_Index := Data.Schema.Index;
    begin
       Stream.Start_Entity (Node.Name);
       Stream.Write_Entity ("period", 10);
@@ -59,7 +63,7 @@ package body Helios.Reports is
             Stream.Start_Array (Child.Name);
             Prev_Value := 0;
             Pos := Child.Index;
-            while pos < Data.Offset loop
+            while Pos < Data.Offset loop
                Value := Data.Values (Pos);
                Pos := Pos + Count;
                if Value > Prev_Value then
@@ -68,12 +72,12 @@ package body Helios.Reports is
                   Offset := -Long_Long_Integer (Prev_Value - Value);
                end if;
                Prev_Value := Value;
-               if Offset < Long_Long_Integer (Integer'Last) and Offset > Long_Long_Integer (Integer'First) then
+               if Offset < Long_Long_Integer (Integer'Last)
+                 and Offset > Long_Long_Integer (Integer'First)
+               then
                   Stream.Write_Entity (Child.Name, Integer (Offset));
                else
                   Stream.Write_Long_Entity (Child.Name, Offset);
---                 else
---                    Stream.Write_Entity (Child.Name, Uint64'Image (Value));
                end if;
             end loop;
             Stream.End_Array (Child.Name);
