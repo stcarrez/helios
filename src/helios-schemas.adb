@@ -69,11 +69,17 @@ package body Helios.Schemas is
    --  ------------------------------
    --  Add a new definition node to the definition.
    --  ------------------------------
-   function Create_Definition (Into  : in Definition_Type_Access;
-                               Name  : in String;
-                               Kind  : in Value_Type := V_INTEGER) return Definition_Type_Access is
-      Result : constant Definition_Type_Access := new Definition_Type (Len => Name'Length);
+   function Create_Definition (Into   : in Definition_Type_Access;
+                               Name   : in String;
+                               Filter : in String := "*";
+                               Kind   : in Value_Type := V_INTEGER)
+                               return Definition_Type_Access is
+      Result : Definition_Type_Access;
    begin
+      if not Is_Filter_Enable (Name, Filter) then
+         return null;
+      end if;
+      Result := new Definition_Type (Len => Name'Length);
       Result.Kind := Kind;
       if Kind = V_NONE then
          Current_Index := Current_Index + 1;
