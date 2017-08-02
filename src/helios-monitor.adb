@@ -15,13 +15,19 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
+with Ada.Strings.Fixed;
 with Util.Properties.Basic;
 with Util.Log.Loggers;
 package body Helios.Monitor is
 
+   use type Helios.Schemas.Value_Index;
+
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Monitor");
 
    List : Agent_Type_Access;
+
+   function Is_Filter_Enable (Name   : in String;
+                              Filter : in String) return Boolean;
 
    --  ------------------------------
    --  The timer handler executed when the timer deadline has passed.
@@ -38,13 +44,35 @@ package body Helios.Monitor is
       Event.Repeat (Agent.Period);
    end Time_Handler;
 
-   --  ------------------------------
-   --  Create a new definition with the given name.
-   --  ------------------------------
-   function Create_Definition (Agent : in Agent_Type;
-                               Name  : in String) return Schemas.Definition_Type_Access is
+   function Is_Filter_Enable (Name   : in String;
+                              Filter : in String) return Boolean is
+      Pos : Natural;
    begin
-      return Schemas.Create_Definition (Agent.Node, Name);
+      if Filter = "*" then
+         return True;
+      end if;
+      Pos := Ada.Strings.Fixed.Index (Filter, Name);
+      if Pos = 0 then
+         return False;
+      end if;
+      return True;
+   end Is_Filter_Enable;
+
+   --  ------------------------------
+   --  Create a new definition with the given name.  The filter parameter allows to control
+   --  which definition values are really needed.  The "*" indicates that all values are required.
+   --  Otherwise, it is a comma separated list of strings.  A null definition is returned if
+   --  the filter does not contain the definition name.
+   --  ------------------------------
+   function Create_Definition (Agent  : in Agent_Type;
+                               Name   : in String;
+                               Filter : in String := "*") return Schemas.Definition_Type_Access is
+   begin
+      if Is_Filter_Enable (Name, Filter) then
+         return Schemas.Create_Definition (Agent.Node, Name);
+      else
+         return null;
+      end if;
    end Create_Definition;
 
    --  ------------------------------
@@ -81,10 +109,12 @@ package body Helios.Monitor is
       Log.Info ("Register agent {0}", Name);
 
       Agent.Period := Get_Period (Config, "period", 1);
-      Agent.Next := List;
-      List := Agent;
       Agent.Node := Schemas.Create_Definition (null, Name, Schemas.V_NONE);
       Agent.Start (Config);
+      if Agent.Node.Index > 0 then
+         Agent.Next := List;
+         List := Agent;
+      end if;
    end Register;
 
    --  ------------------------------
