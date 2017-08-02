@@ -24,8 +24,9 @@ package body Helios.Monitor.Ifnet is
    --  ------------------------------
    --  Make a new interface definition for the given interface name.
    --  ------------------------------
-   procedure Make_Interface (Agent : in out Agent_Type;
-                             Name  : in String) is
+   procedure Make_Interface (Agent  : in out Agent_Type;
+                             Name   : in String;
+                             Filter : in String) is
 
       Itf : constant Interface_Definition_Type_Access
         := new Interface_Definition_Type (Len => Name'Length);
@@ -34,7 +35,8 @@ package body Helios.Monitor.Ifnet is
       Agent.Add_Definition (Itf.all'Access);
       for I in Itf.Stats'Range loop
          Itf.Stats (I) := Schemas.Create_Definition (Itf.all'Access,
-                                                     To_Lower_Case (Stat_Type'Image (I)));
+                                                     To_Lower_Case (Stat_Type'Image (I)),
+                                                     Filter);
       end loop;
    end Make_Interface;
 
@@ -44,10 +46,11 @@ package body Helios.Monitor.Ifnet is
    overriding
    procedure Start (Agent  : in out Agent_Type;
                     Config : in Util.Properties.Manager) is
+      Values : constant String := Config.Get ("values", "*");
    begin
-      Make_Interface (Agent, "eth1");
-      Make_Interface (Agent, "eth3");
-      Make_Interface (Agent, "tap0");
+      Make_Interface (Agent, "eth1", Values);
+      Make_Interface (Agent, "eth3", Values);
+      Make_Interface (Agent, "tap0", Values);
    end Start;
 
    --  ------------------------------
