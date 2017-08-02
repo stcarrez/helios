@@ -36,10 +36,9 @@ package body Helios.Monitor.Agent is
       procedure Configure (Name   : in String;
                            Config : in Util.Properties.Manager) is
          Agent : Agent_Type_Access;
-         Timer : Util.Events.Timers.Timer_Ref;
       begin
          if Name = "helios" then
-            Runtime.Report_Period := Get_Period (Config, "report_period");
+            Runtime.Report_Period := Get_Period (Config, "report_period", REPORT_PERIOD);
          elsif Name = "ifnet" then
             Agent := Ifnet_Mon'Access;
          elsif Name = "cpu" then
@@ -49,7 +48,6 @@ package body Helios.Monitor.Agent is
          end if;
          if Agent /= null then
             Register (Agent, Name, Config);
-            Runtime.Timers.Set_Timer (Agent.all'Access, Timer, Agent.Period);
          end if;
       end Configure;
 
@@ -62,8 +60,22 @@ package body Helios.Monitor.Agent is
          end if;
       end Process;
 
+      procedure Build_Queue (Agent : in out Agent_Type'Class) is
+         Count : Natural := 1 + (Runtime.Report_Period / Agent.Period);
+      begin
+         Helios.Datas.Initialize (Agent.Data, Agent.Node, Count);
+      end Build_Queue;
+
+      procedure Start_Timer (Agent : in out Agent_Type'Class) is
+         Timer : Util.Events.Timers.Timer_Ref;
+      begin
+         Runtime.Timers.Set_Timer (Agent.all'Access, Timer, Agent.Period);
+      end Start_Timer;
+
    begin
       Config.Iterate (Process'Access);
+      Iterate (Build_Queue'Access);
+      Iterate (Start_Timer'Access);
    end Configure;
 
    --  ------------------------------
@@ -72,7 +84,7 @@ package body Helios.Monitor.Agent is
    procedure Run (Runtime : in out Runtime_Type) is
       Deadline : Ada.Real_Time.Time;
    begin
-      loop
+      while not Runtime.Stop loop
          Runtime.Timers.Process (Deadline);
          delay until Deadline;
       end loop;
