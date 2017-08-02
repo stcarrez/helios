@@ -55,16 +55,6 @@ package body Helios.Commands.Info is
       Context.Runtime.Timers.Set_Timer (Report'Unchecked_Access, Timer,
                                         Context.Runtime.Report_Period + Ada.Real_Time.Seconds (1));
       Monitor.Agent.Run (Context.Runtime);
---        for I in 1 .. 10 loop --  Data.Data'Range loop
---           Helios.Datas.Initialize (Data.Data (I));
---           Helios.Monitor.Collect_All (Data.Data (I));
---           Data.Count := Data.Count + 1;
---           --      Helios.Reports.Write_Snapshot (Stream, Data, Helios.Schemas.Get_Root);
---           --  Helios.Reports.Files.Save_Snapshot ("result.json", Data, Helios.Schemas.Get_Root);
---           delay 1.0;
---        end loop;
---        Helios.Reports.Files.Save_Snapshot ("result.json", Data, Helios.Schemas.Get_Root);
-
    end Execute;
 
    --  Write the help associated with the command.
