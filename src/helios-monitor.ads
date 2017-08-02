@@ -53,7 +53,7 @@ package Helios.Monitor is
                              Name  : in String) return Schemas.Definition_Type_Access;
 
    --  Register the agent.
-   procedure Register (Agent  : in out Agent_Type'Class;
+   procedure Register (Agent  : in Agent_Type_Access;
                        Name   : in String;
                        Config : in Util.Properties.Manager);
 
