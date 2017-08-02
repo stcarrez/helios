@@ -5,7 +5,6 @@ NAME=helios
 MODE=debug
 GNATMAKE=@GNATMAKE@
 GNATCLEAN=gnatclean
-SVN=svn
 INSTALL=@INSTALL@
 DYNAMO=dynamo
 LN_S=@LN_S@
@@ -14,8 +13,6 @@ CP=cp
 LN=ln -s
 
 GPRPATH:=${NAME}.gpr
-
-
 
 distdir=helios-@HELIOS_VERSION@
 
@@ -70,10 +67,6 @@ analyze:
 
 # Clean, then build executables for all mains defined by the project.
 rebuild: clean build
-
-# Rebuild the generated model files
-generate:
-	$(DYNAMO) generate db
 
 install:  uninstall
 	$(INSTALL) bin/${NAME} $(prefix)/bin/${NAME}
