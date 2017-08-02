@@ -21,6 +21,8 @@ package body Helios.Datas is
    use type Schemas.Definition_Type_Access;
    use type Schemas.Value_Index;
 
+   Reports : Report_Queue_Type;
+
    --  ------------------------------
    --  Initialize the snapshot.
    --  ------------------------------
@@ -28,6 +30,16 @@ package body Helios.Datas is
    begin
       Data.Values := new Value_Array (1 .. Schemas.Get_Count);
    end Initialize;
+
+   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Type_Access is
+      Result : Snapshot_Type_Access := new Snapshot_Type;
+      Count  : Value_Array_Index := Queue.Schema.Index * Value_Array_Index (Queue.Count);
+   begin
+      Result.Schema := Queue.Schema;
+      Result.Offset := 0;
+      Result.Values := new Value_Array (1 .. Count);
+      return Result;
+   end Allocate;
 
    --  ------------------------------
    --  Initialize the snapshot queue for the schema.
@@ -38,6 +50,7 @@ package body Helios.Datas is
    begin
       Queue.Schema := Schema;
       Queue.Count  := Count;
+      Queue.Current := Allocate (Queue);
    end Initialize;
 
    --  ------------------------------
@@ -61,7 +74,10 @@ package body Helios.Datas is
       Snapshot := Queue.Current;
       Snapshot.Offset := Snapshot.Offset + Queue.Schema.Index;
       if Snapshot.Offset > Snapshot.Values'Last then
-         null; --  Freeze (Snapshot);
+         Snapshot.Next := Reports.Snapshot;
+         Reports.Snapshot := Snapshot;
+         Queue.Current := Allocate (Queue);
+         Snapshot := Queue.Current;
       end if;
    end Prepare;
 
