@@ -15,12 +15,15 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Ada.Real_Time;
+with Util.Events.Timers;
 with Helios.Datas;
 with Helios.Monitor.Agent;
 with Helios.Schemas;
 with Helios.Reports.Files;
 package body Helios.Commands.Info is
+
+   use type Ada.Real_Time.Time_Span;
 
    --  Execute a information command to report information about the agent and monitoring.
    overriding
@@ -28,19 +31,39 @@ package body Helios.Commands.Info is
                       Name      : in String;
                       Args      : in Argument_List'Class;
                       Context   : in out Context_Type) is
-      Data        : Helios.Datas.Snapshot_Queue_Type (Max_Count => 1000);
+      type Info_Report is new Helios.Reports.Files.File_Report_Type with null record;
+      --  The timer handler executed when the timer deadline has passed.
+      overriding
+      procedure Time_Handler (Report : in out Info_Report;
+                              Event  : in out Util.Events.Timers.Timer_Ref'Class);
+
+      --  The timer handler executed when the timer deadline has passed.
+      overriding
+      procedure Time_Handler (Report : in out Info_Report;
+                              Event  : in out Util.Events.Timers.Timer_Ref'Class) is
+      begin
+         Helios.Reports.Files.File_Report_Type (Report).Time_Handler (Event);
+         Context.Runtime.Stop := True;
+      end Time_Handler;
+
+      Timer  : Util.Events.Timers.Timer_Ref;
+      Report : aliased Info_Report;
    begin
+      Report.Path := Ada.Strings.Unbounded.To_Unbounded_String ("report.json");
       Load (Context);
       Monitor.Agent.Configure (Context.Runtime, Context.Config);
-      for I in 1 .. 10 loop --  Data.Data'Range loop
-         Helios.Datas.Initialize (Data.Data (I));
-         Helios.Monitor.Collect_All (Data.Data (I));
-         Data.Count := Data.Count + 1;
-         --      Helios.Reports.Write_Snapshot (Stream, Data, Helios.Schemas.Get_Root);
-         --  Helios.Reports.Files.Save_Snapshot ("result.json", Data, Helios.Schemas.Get_Root);
-         delay 1.0;
-      end loop;
-      Helios.Reports.Files.Save_Snapshot ("result.json", Data, Helios.Schemas.Get_Root);
+      Context.Runtime.Timers.Set_Timer (Report'Unchecked_Access, Timer,
+                                        Context.Runtime.Report_Period + Ada.Real_Time.Seconds (1));
+      Monitor.Agent.Run (Context.Runtime);
+--        for I in 1 .. 10 loop --  Data.Data'Range loop
+--           Helios.Datas.Initialize (Data.Data (I));
+--           Helios.Monitor.Collect_All (Data.Data (I));
+--           Data.Count := Data.Count + 1;
+--           --      Helios.Reports.Write_Snapshot (Stream, Data, Helios.Schemas.Get_Root);
+--           --  Helios.Reports.Files.Save_Snapshot ("result.json", Data, Helios.Schemas.Get_Root);
+--           delay 1.0;
+--        end loop;
+--        Helios.Reports.Files.Save_Snapshot ("result.json", Data, Helios.Schemas.Get_Root);
 
    end Execute;
 
