@@ -40,7 +40,8 @@ package body Helios.Monitor.Agent is
    --  ------------------------------
    --  Configure the agent plugins.
    --  ------------------------------
-   procedure Configure (Config : in Util.Properties.Manager) is
+   procedure Configure (Runtime : in out Runtime_Type;
+                        Config  : in Util.Properties.Manager) is
       procedure Process (Name  : in String;
                          Value : in Util.Properties.Value);
 
