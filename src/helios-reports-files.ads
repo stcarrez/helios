@@ -25,7 +25,6 @@ package Helios.Reports.Files is
 
    --  Write the collected snapshot in the file in JSON format.
    procedure Save_Snapshot (Path : in String;
-                            Data : in Helios.Datas.Snapshot_Queue_Type;
-                            Node : in Helios.Schemas.Definition_Type_Access);
+                            Data : in Helios.Datas.Report_Queue_Type);
 
 end Helios.Reports.Files;
