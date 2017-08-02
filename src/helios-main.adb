@@ -45,7 +45,7 @@ begin
    Log_Config.Set ("log4j.appender.stdout.level", "INFO");
    Log_Config.Set ("log4j.appender.stdout.layout", "message");
    Log_Config.Set ("log4j.logger.Util", "FATAL");
-   Log_Config.Set ("log4j.logger.Helios", "FATAL");
+   Log_Config.Set ("log4j.logger.Helios", "ERROR");
    Util.Log.Loggers.Initialize (Log_Config);
 
    Helios.Commands.Initialize;
@@ -58,6 +58,7 @@ begin
 
          when 'c' =>
             Ctx.Config_Path := Ada.Strings.Unbounded.To_Unbounded_String (Parameter);
+            First := First + 1;
 
          when 'd' =>
             Debug := True;
