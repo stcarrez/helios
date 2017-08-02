@@ -18,9 +18,13 @@
 
 package Helios.Monitor.Agent is
 
+   --  Default period to report snapshots (in seconds).
+   REPORT_PERIOD : constant Natural := 300;
+
    type Runtime_Type is limited record
       Timers        : Util.Events.Timers.Timer_List;
       Report_Period : Ada.Real_Time.Time_Span;
+      Stop          : Boolean := False;
    end record;
 
    --  Configure the agent plugins.
