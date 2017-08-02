@@ -24,19 +24,26 @@ package body Helios.Commands.Check is
 
    use type Ada.Real_Time.Time_Span;
 
+   --  ------------------------------
    --  Execute a information command to report information about the agent and monitoring.
+   --  ------------------------------
    overriding
    procedure Execute (Command   : in Command_Type;
                       Name      : in String;
                       Args      : in Argument_List'Class;
                       Context   : in out Context_Type) is
+      pragma Unreferenced (Command, Name);
+
       type Info_Report is new Helios.Reports.Files.File_Report_Type with null record;
+
       --  The timer handler executed when the timer deadline has passed.
       overriding
       procedure Time_Handler (Report : in out Info_Report;
                               Event  : in out Util.Events.Timers.Timer_Ref'Class);
 
+      --  ------------------------------
       --  The timer handler executed when the timer deadline has passed.
+      --  ------------------------------
       overriding
       procedure Time_Handler (Report : in out Info_Report;
                               Event  : in out Util.Events.Timers.Timer_Ref'Class) is
@@ -48,15 +55,21 @@ package body Helios.Commands.Check is
       Timer  : Util.Events.Timers.Timer_Ref;
       Report : aliased Info_Report;
    begin
-      Report.Path := Ada.Strings.Unbounded.To_Unbounded_String ("report.json");
-      Load (Context);
-      Monitor.Agent.Configure (Context.Runtime, Context.Config);
-      Context.Runtime.Timers.Set_Timer (Report'Unchecked_Access, Timer,
-                                        Context.Runtime.Report_Period + Ada.Real_Time.Seconds (1));
-      Monitor.Agent.Run (Context.Runtime);
+      if Args.Get_Count /= 1 then
+         Helios.Commands.Driver.Usage (Args);
+      else
+         Report.Path := Ada.Strings.Unbounded.To_Unbounded_String (Args.Get_Argument (1));
+         Load (Context);
+         Monitor.Agent.Configure (Context.Runtime, Context.Config);
+         Context.Runtime.Timers.Set_Timer (Report'Unchecked_Access, Timer,
+                                           Context.Runtime.Report_Period + Ada.Real_Time.Seconds (1));
+         Monitor.Agent.Run (Context.Runtime);
+      end if;
    end Execute;
 
+   --  ------------------------------
    --  Write the help associated with the command.
+   --  ------------------------------
    overriding
    procedure Help (Command   : in Command_Type;
                    Context   : in out Context_Type) is
