@@ -36,7 +36,7 @@ package body Helios.Datas is
       use type Schemas.Value_Index;
    begin
       if Def /= null and then Def.Index > 0 then
-         Into.Values (Def.Index) := Value;
+         Into.Values (Def.Index + Into.Offset) := Value;
       end if;
    end Set_Value;
 
