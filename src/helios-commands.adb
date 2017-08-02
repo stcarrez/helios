@@ -19,12 +19,14 @@ with Ada.IO_Exceptions;
 with Ada.Command_Line;
 with Util.Log.Loggers;
 with Helios.Commands.Info;
+with Helios.Commands.Check;
 package body Helios.Commands is
 
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Commands");
 
    Help_Command    : aliased Helios.Commands.Drivers.Help_Command_Type;
    Info_Command    : aliased Helios.Commands.Info.Command_Type;
+   Check_Command   : aliased Helios.Commands.Check.Command_Type;
 
    --  ------------------------------
    --  Initialize the commands.
@@ -39,6 +41,7 @@ package body Helios.Commands is
                           "  -c config    Use the configuration file");
       Driver.Add_Command ("help", Help_Command'Access);
       Driver.Add_Command ("info", Info_Command'Access);
+      Driver.Add_Command ("check", Check_Command'Access);
    end Initialize;
 
    --  ------------------------------
