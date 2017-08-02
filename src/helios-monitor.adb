@@ -69,13 +69,8 @@ package body Helios.Monitor is
    procedure Register (Agent  : in Agent_Type_Access;
                        Name   : in String;
                        Config : in Util.Properties.Manager) is
-      Period : Integer
-        := Util.Properties.Basic.Integer_Property.Get (Config, "period", 1);
    begin
-      if Period <= 0 then
-         Period := 1;
-      end if;
-      Agent.Period := Ada.Real_Time.Seconds (Period);
+      Agent.Period := Get_Period (Config, "period", 1);
       Agent.Next := List;
       List := Agent;
       Agent.Node := Schemas.Create_Definition (null, Name, Schemas.V_NONE);
@@ -93,5 +88,20 @@ package body Helios.Monitor is
          Agent := Agent.Next;
       end loop;
    end Collect_All;
+
+   --  ------------------------------
+   --  Get a period configuration parameter.
+   --  ------------------------------
+   function Get_Period (Config  : in Util.Properties.Manager;
+                        Name    : in String;
+                        Default : in Natural) return Ada.Real_Time.Time_Span is
+      Period : Integer
+        := Util.Properties.Basic.Integer_Property.Get (Config, Name, Default);
+   begin
+      if Period <= 0 then
+         Period := Default;
+      end if;
+      return Ada.Real_Time.Seconds (Period);
+   end Get_Period;
 
 end Helios.Monitor;
