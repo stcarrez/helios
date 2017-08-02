@@ -66,4 +66,10 @@ package Helios.Schemas is
                              Name : in String) return Definition_Type_Access with
      Pre => From /= null;
 
+   --  Returns true if the name is allowed by the filter configuration.
+   --  The filter string is a comma separated list of allowed names.
+   --  The special value "*" allows any name.
+   function Is_Filter_Enable (Name   : in String;
+                              Filter : in String) return Boolean;
+
 end Helios.Schemas;
