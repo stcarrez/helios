@@ -18,6 +18,8 @@
 with Ada.Strings.Fixed;
 package body Helios.Schemas is
 
+   function Allocate_Index (From : in Definition_Type_Access) return Value_Index;
+
    Root          : aliased Definition_Type (Len => 0);
    Current_Index : Monitor_Index := 0;
 
@@ -54,7 +56,7 @@ package body Helios.Schemas is
    --  ------------------------------
    function Is_Filter_Enable (Name   : in String;
                               Filter : in String) return Boolean is
-     Pos : Natural;
+      Pos : Natural;
    begin
       if Filter = "*" then
          return True;
