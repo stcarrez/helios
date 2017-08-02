@@ -78,8 +78,10 @@ package Helios.Datas is
       S : Natural;
    end record;
 
-   type Report_Queue_Type is limited record
+   type Report_Queue_Type is record
       Snapshot : Snapshot_Type_Access;
    end record;
+
+   function Get_Report return Report_Queue_Type;
 
 end Helios.Datas;
