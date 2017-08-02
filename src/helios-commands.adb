@@ -20,6 +20,7 @@ with Ada.Command_Line;
 with Util.Log.Loggers;
 with Helios.Commands.Info;
 with Helios.Commands.Check;
+with Helios.Commands.Agent;
 package body Helios.Commands is
 
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Commands");
@@ -27,6 +28,7 @@ package body Helios.Commands is
    Help_Command    : aliased Helios.Commands.Drivers.Help_Command_Type;
    Info_Command    : aliased Helios.Commands.Info.Command_Type;
    Check_Command   : aliased Helios.Commands.Check.Command_Type;
+   Agent_Command   : aliased Helios.Commands.Agent.Command_Type;
 
    --  ------------------------------
    --  Initialize the commands.
@@ -42,6 +44,7 @@ package body Helios.Commands is
       Driver.Add_Command ("help", Help_Command'Access);
       Driver.Add_Command ("info", Info_Command'Access);
       Driver.Add_Command ("check", Check_Command'Access);
+      Driver.Add_Command ("agent", Agent_Command'Access);
    end Initialize;
 
    --  ------------------------------
