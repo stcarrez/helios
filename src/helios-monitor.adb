@@ -26,9 +26,6 @@ package body Helios.Monitor is
 
    List : Agent_Type_Access;
 
-   function Is_Filter_Enable (Name   : in String;
-                              Filter : in String) return Boolean;
-
    --  ------------------------------
    --  The timer handler executed when the timer deadline has passed.
    --  ------------------------------
@@ -44,20 +41,6 @@ package body Helios.Monitor is
       Event.Repeat (Agent.Period);
    end Time_Handler;
 
-   function Is_Filter_Enable (Name   : in String;
-                              Filter : in String) return Boolean is
-      Pos : Natural;
-   begin
-      if Filter = "*" then
-         return True;
-      end if;
-      Pos := Ada.Strings.Fixed.Index (Filter, Name);
-      if Pos = 0 then
-         return False;
-      end if;
-      return True;
-   end Is_Filter_Enable;
-
    --  ------------------------------
    --  Create a new definition with the given name.  The filter parameter allows to control
    --  which definition values are really needed.  The "*" indicates that all values are required.
@@ -68,11 +51,7 @@ package body Helios.Monitor is
                                Name   : in String;
                                Filter : in String := "*") return Schemas.Definition_Type_Access is
    begin
-      if Is_Filter_Enable (Name, Filter) then
-         return Schemas.Create_Definition (Agent.Node, Name);
-      else
-         return null;
-      end if;
+      return Schemas.Create_Definition (Agent.Node, Name, Filter);
    end Create_Definition;
 
    --  ------------------------------
@@ -109,7 +88,7 @@ package body Helios.Monitor is
       Log.Info ("Register agent {0}", Name);
 
       Agent.Period := Get_Period (Config, "period", 1);
-      Agent.Node := Schemas.Create_Definition (null, Name, Schemas.V_NONE);
+      Agent.Node := Schemas.Create_Definition (null, Name, "*", Schemas.V_NONE);
       Agent.Start (Config);
       if Agent.Node.Index > 0 then
          Agent.Next := List;
