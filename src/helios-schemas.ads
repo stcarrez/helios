@@ -26,6 +26,8 @@ package Helios.Schemas is
    type Value_Index is new Natural;
    subtype Value_Array_Index is Value_Index range 1 .. Value_Index'Last;
 
+   type Monitor_Index is new Natural;
+
    type Definition_Type;
    type Definition_Type_Access is access all Definition_Type'Class;
 
@@ -33,6 +35,7 @@ package Helios.Schemas is
    type Definition_Type (Len : Natural) is tagged record
       Kind    : Value_Type;
       Index   : Value_Index := 0;
+      Monitor : Monitor_Index := 0;
       Parent  : Definition_Type_Access;
       Next    : Definition_Type_Access;
       Child   : Definition_Type_Access;
@@ -47,9 +50,9 @@ package Helios.Schemas is
    function Get_Count return Value_Index;
 
    --  Add a new definition node to the definition.
-   function Create_Definition (Into : in Definition_Type_Access;
-                               Name : in String;
-                               Kind : in Value_Type := V_INTEGER)
+   function Create_Definition (Into  : in Definition_Type_Access;
+                               Name  : in String;
+                               Kind  : in Value_Type := V_INTEGER)
                                return Definition_Type_Access with
      Pre => Kind = V_NONE or else Into /= null;
 
