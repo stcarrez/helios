@@ -16,6 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Streams.Stream_IO;
+with Ada.Real_Time;
 with Util.Serialize.IO.JSON;
 with Util.Streams.Texts;
 with Util.Streams.Files;
@@ -31,6 +32,9 @@ package body Helios.Reports.Files is
                            Event  : in out Util.Events.Timers.Timer_Ref'Class) is
    begin
       Save_Snapshot (Ada.Strings.Unbounded.To_String (Report.Path), Helios.Datas.Get_Report);
+      if Report.Period > 0 then
+         Event.Repeat (Ada.Real_Time.Seconds (Report.Period));
+      end if;
    end Time_Handler;
 
    --  ------------------------------
