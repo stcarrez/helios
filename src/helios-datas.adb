@@ -52,8 +52,9 @@ package body Helios.Datas is
                          Schema : in Helios.Schemas.Definition_Type_Access;
                          Count  : in Positive) is
    begin
-      Log.Info ("Initialize schema queue {0} with {1} values",
-                Schema.Name, Positive'Image (Count));
+      Log.Info ("Initialize schema queue {0} with{1} samples of{2} values",
+                Schema.Name, Positive'Image (Count),
+                Value_Array_Index'Image (Schema.Index));
       Queue.Schema := Schema;
       Queue.Count  := Count;
       Queue.Current := Allocate (Queue);
