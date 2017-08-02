@@ -18,7 +18,12 @@
 
 package Helios.Monitor.Agent is
 
+   type Runtime_Type is limited record
+      Timers : Util.Events.Timers.Timer_List;
+   end record;
+
    --  Configure the agent plugins.
-   procedure Configure (Config : in Util.Properties.Manager);
+   procedure Configure (Runtime : in out Runtime_Type;
+                        Config  : in Util.Properties.Manager);
 
 end Helios.Monitor.Agent;
