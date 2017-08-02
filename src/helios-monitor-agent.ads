@@ -27,4 +27,7 @@ package Helios.Monitor.Agent is
    procedure Configure (Runtime : in out Runtime_Type;
                         Config  : in Util.Properties.Manager);
 
+   --  Run the monitoring agent main loop.
+   procedure Run (Runtime : in out Runtime_Type);
+
 end Helios.Monitor.Agent;
