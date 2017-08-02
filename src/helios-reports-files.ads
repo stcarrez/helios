@@ -15,8 +15,18 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Ada.Strings.Unbounded;
+with Util.Events.Timers;
 package Helios.Reports.Files is
+
+   type File_Report_Type is limited new Util.Events.Timers.Timer with record
+      Path  : Ada.Strings.Unbounded.Unbounded_String;
+   end record;
+
+   --  The timer handler executed when the timer deadline has passed.
+   overriding
+   procedure Time_Handler (Report : in out File_Report_Type;
+                           Event  : in out Util.Events.Timers.Timer_Ref'Class);
 
    --  Write the collected snapshot in the file in JSON format.
    procedure Save_Snapshot (Path : in String;
