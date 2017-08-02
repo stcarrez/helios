@@ -32,9 +32,10 @@ package body Helios.Commands is
    procedure Initialize is
    begin
       Driver.Set_Description ("helios - monitoring agent");
-      Driver.Set_Usage ("[-v] [-c config] <command> [<args>]" & ASCII.LF &
+      Driver.Set_Usage ("[-v] [-d] [-c config] <command> [<args>]" & ASCII.LF &
                           "where:" & ASCII.LF &
                           "  -v           Verbose execution mode" & ASCII.LF &
+                          "  -d           Debug execution mode" & ASCII.LF &
                           "  -c config    Use the configuration file");
       Driver.Add_Command ("help", Help_Command'Access);
       Driver.Add_Command ("info", Info_Command'Access);
