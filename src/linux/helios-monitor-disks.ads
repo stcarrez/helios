@@ -42,6 +42,7 @@ package Helios.Monitor.Disks is
    --  Make a new disk definition for the given disk name.
    procedure Make_Disk (Agent  : in out Agent_Type;
                         Name   : in String;
+                        Disks  : in String;
                         Filter : in String);
 
 end Helios.Monitor.Disks;
