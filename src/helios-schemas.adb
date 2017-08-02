@@ -19,7 +19,7 @@
 package body Helios.Schemas is
 
    Root          : aliased Definition_Type (Len => 0);
-   Current_Index : Value_Index := 0;
+   Current_Index : Monitor_Index := 0;
 
    --  ------------------------------
    --  Get the root definition tree.
@@ -34,21 +34,34 @@ package body Helios.Schemas is
    --  ------------------------------
    function Get_Count return Value_Index is
    begin
-      return Current_Index;
+      return 0; --  Current_Index;
    end Get_Count;
+
+   function Allocate_Index (From : in Definition_Type_Access) return Value_Index is
+   begin
+      if From.Kind = V_NONE then
+         From.Index := From.Index + 1;
+         return From.Index;
+      else
+         return Allocate_Index (From.Parent);
+      end if;
+   end Allocate_Index;
 
    --  ------------------------------
    --  Add a new definition node to the definition.
    --  ------------------------------
-   function Create_Definition (Into : in Definition_Type_Access;
-                               Name : in String;
-                               Kind : in Value_Type := V_INTEGER) return Definition_Type_Access is
+   function Create_Definition (Into  : in Definition_Type_Access;
+                               Name  : in String;
+                               Kind  : in Value_Type := V_INTEGER) return Definition_Type_Access is
       Result : constant Definition_Type_Access := new Definition_Type (Len => Name'Length);
    begin
       Result.Kind := Kind;
-      if Kind /= V_NONE then
+      if Kind = V_NONE then
          Current_Index := Current_Index + 1;
-         Result.Index  := Current_Index;
+         Result.Monitor := Current_Index;
+      else
+         Result.Monitor := Into.Monitor;
+         Result.Index := Allocate_Index (Into);
       end if;
       Result.Name   := Name;
       Result.Parent := Into;
@@ -69,10 +82,10 @@ package body Helios.Schemas is
    procedure Add_Definition (Into : in Definition_Type_Access;
                              Def  : in Definition_Type_Access) is
    begin
-      Current_Index := Current_Index + 1;
+      Def.Index := Allocate_Index (Into);
+      Def.Monitor := Into.Monitor;
       Def.Parent := Into;
       Def.Next := Into.Child;
-      Def.Index := Current_Index;
       Into.Child := Def;
    end Add_Definition;
 
