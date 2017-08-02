@@ -15,7 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Ada.Strings.Fixed;
 package body Helios.Schemas is
 
    Root          : aliased Definition_Type (Len => 0);
@@ -46,6 +46,25 @@ package body Helios.Schemas is
          return Allocate_Index (From.Parent);
       end if;
    end Allocate_Index;
+
+   --  ------------------------------
+   --  Returns true if the name is allowed by the filter configuration.
+   --  The filter string is a comma separated list of allowed names.
+   --  The special value "*" allows any name.
+   --  ------------------------------
+   function Is_Filter_Enable (Name   : in String;
+                              Filter : in String) return Boolean is
+     Pos : Natural;
+   begin
+      if Filter = "*" then
+         return True;
+      end if;
+      Pos := Ada.Strings.Fixed.Index (Filter, Name);
+      if Pos = 0 then
+         return False;
+      end if;
+      return True;
+   end Is_Filter_Enable;
 
    --  ------------------------------
    --  Add a new definition node to the definition.
