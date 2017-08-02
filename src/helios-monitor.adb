@@ -15,7 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Util.Properties.Basic;
 package body Helios.Monitor is
 
    List : Agent_Type_Access;
@@ -69,7 +69,13 @@ package body Helios.Monitor is
    procedure Register (Agent  : in out Agent_Type'Class;
                        Name   : in String;
                        Config : in Util.Properties.Manager) is
+      Period : Integer
+        := Util.Properties.Basic.Integer_Property.Get (Config, "period", 1);
    begin
+      if Period <= 0 then
+         Period := 1;
+      end if;
+      Agent.Period := Ada.Real_Time.Seconds (Period);
       Agent.Next := List;
       List := Agent'Unchecked_Access;
       Agent.Node := Schemas.Create_Definition (null, Name, Schemas.V_NONE);
