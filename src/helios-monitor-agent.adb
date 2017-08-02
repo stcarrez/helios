@@ -38,7 +38,9 @@ package body Helios.Monitor.Agent is
          Agent : Agent_Type_Access;
          Timer : Util.Events.Timers.Timer_Ref;
       begin
-         if Name = "ifnet" then
+         if Name = "helios" then
+            Runtime.Report_Period := Get_Period (Config, "report_period");
+         elsif Name = "ifnet" then
             Agent := Ifnet_Mon'Access;
          elsif Name = "cpu" then
             Agent := Cpu_Mon'Access;
@@ -63,5 +65,17 @@ package body Helios.Monitor.Agent is
    begin
       Config.Iterate (Process'Access);
    end Configure;
+
+   --  ------------------------------
+   --  Run the monitoring agent main loop.
+   --  ------------------------------
+   procedure Run (Runtime : in out Runtime_Type) is
+      Deadline : Ada.Real_Time.Time;
+   begin
+      loop
+         Runtime.Timers.Process (Deadline);
+         delay until Deadline;
+      end loop;
+   end Run;
 
 end Helios.Monitor.Agent;
