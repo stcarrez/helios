@@ -18,8 +18,6 @@
 with Ada.Strings.Unbounded;
 with Util.Commands.Drivers;
 with Util.Properties;
-with Util.Commands.Consoles;
-with Util.Commands.Consoles.Text;
 with Helios.Monitor.Agent;
 package Helios.Commands is
 
