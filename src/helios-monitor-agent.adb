@@ -61,6 +61,8 @@ package body Helios.Monitor.Agent is
       end Process;
 
       procedure Build_Queue (Agent : in out Agent_Type'Class) is
+         use type Ada.Real_Time.Time_Span;
+
          Count : Natural := 1 + (Runtime.Report_Period / Agent.Period);
       begin
          Helios.Datas.Initialize (Agent.Data, Agent.Node, Count);
@@ -69,7 +71,7 @@ package body Helios.Monitor.Agent is
       procedure Start_Timer (Agent : in out Agent_Type'Class) is
          Timer : Util.Events.Timers.Timer_Ref;
       begin
-         Runtime.Timers.Set_Timer (Agent.all'Access, Timer, Agent.Period);
+         Runtime.Timers.Set_Timer (Agent'Unchecked_Access, Timer, Agent.Period);
       end Start_Timer;
 
    begin
