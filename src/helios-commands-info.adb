@@ -31,8 +31,8 @@ package body Helios.Commands.Info is
       Data        : Helios.Datas.Snapshot_Queue_Type (Max_Count => 1000);
    begin
       Load (Context);
-      Monitor.Agent.Configure (Context.Config);
-      for I in Data.Data'Range loop
+      Monitor.Agent.Configure (Context.Runtime, Context.Config);
+      for I in 1 .. 10 loop --  Data.Data'Range loop
          Helios.Datas.Initialize (Data.Data (I));
          Helios.Monitor.Collect_All (Data.Data (I));
          Data.Count := Data.Count + 1;
