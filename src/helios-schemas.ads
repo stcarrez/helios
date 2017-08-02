@@ -33,7 +33,7 @@ package Helios.Schemas is
 
    --  The schema definition.
    type Definition_Type (Len : Natural) is tagged record
-      Kind    : Value_Type;
+      Kind    : Value_Type := V_NONE;
       Index   : Value_Index := 0;
       Monitor : Monitor_Index := 0;
       Parent  : Definition_Type_Access;
