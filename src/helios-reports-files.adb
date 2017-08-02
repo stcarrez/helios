@@ -24,6 +24,16 @@ package body Helios.Reports.Files is
    use type Helios.Datas.Snapshot_Type_Access;
 
    --  ------------------------------
+   --  The timer handler executed when the timer deadline has passed.
+   --  ------------------------------
+   overriding
+   procedure Time_Handler (Report : in out File_Report_Type;
+                           Event  : in out Util.Events.Timers.Timer_Ref'Class) is
+   begin
+      Save_Snapshot (Ada.Strings.Unbounded.To_String (Report.Path), Helios.Datas.Get_Report);
+   end Time_Handler;
+
+   --  ------------------------------
    --  Write the collected snapshot in the file in JSON format.
    --  ------------------------------
    procedure Save_Snapshot (Path : in String;
