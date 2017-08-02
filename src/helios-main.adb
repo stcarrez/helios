@@ -15,23 +15,14 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with Ada.Exceptions;
 with Ada.Text_IO;
 with Ada.Command_Line;
 with Ada.Strings.Unbounded;
-with Ada.IO_Exceptions;
 with GNAT.Command_Line;
 
-with Util.Log.loggers;
+with Util.Log.Loggers;
 with Util.Properties;
-with Util.Streams.Texts;
-with Util.Streams.Buffered;
-with Util.Serialize.IO.JSON;
 with Util.Commands;
-with Helios.Reports;
-with Helios.Schemas;
-with Helios.Datas;
-with Helios.Reports.Files;
 with Helios.Commands;
 procedure Helios.Main is
 
@@ -105,4 +96,9 @@ begin
    begin
       Helios.Commands.Driver.Execute (Cmd_Name, Args, Ctx);
    end;
+
+exception
+   when E : others =>
+      Log.Error ("Some internal error occurred", E);
+
 end Helios.Main;
