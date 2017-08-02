@@ -40,9 +40,13 @@ package Helios.Monitor is
    procedure Time_Handler (Agent : in out Agent_Type;
                            Event : in out Util.Events.Timers.Timer_Ref'Class);
 
-   --  Create a new definition with the given name.
+   --  Create a new definition with the given name.  The filter parameter allows to control
+   --  which definition values are really needed.  The "*" indicates that all values are required.
+   --  Otherwise, it is a comma separated list of strings.  A null definition is returned if
+   --  the filter does not contain the definition name.
    function Create_Definition (Agent : in Agent_Type;
-                               Name  : in String) return Schemas.Definition_Type_Access;
+                               Name  : in String;
+                               Filter : in String := "*") return Schemas.Definition_Type_Access;
 
    --  Add a definition to the agent.
    procedure Add_Definition (Agent : in out Agent_Type;
