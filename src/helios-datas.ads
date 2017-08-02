@@ -35,15 +35,18 @@ package Helios.Datas is
       Time          : Ada.Calendar.Time;
       Start_Time    : Ada.Real_Time.Time;
       End_Time      : Ada.Real_Time.Time;
+      Offset        : Value_Index := 0;
       Values        : Value_Array_Access;
    end record;
 
    type Snapshot_Array is array (Positive range <>) of Snapshot_Type;
 
    type Snapshot_Queue_Type (Max_Count : Positive) is limited record
-      Count : Natural := 0;
-      Data  : Snapshot_Array (1 .. Max_Count);
+      Count   : Natural := 0;
+      Schema  : Helios.Schemas.Definition_Type_Access;
+      Data    : Snapshot_Array (1 .. Max_Count);
    end record;
+   type Snapshot_Queue_Access is access all Snapshot_Queue_Type;
 
    --  Initialize the snapshot.
    procedure Initialize (Data : in out Snapshot_Type);
