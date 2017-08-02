@@ -32,7 +32,7 @@ package Helios.Monitor is
       Index  : Helios.Schemas.Monitor_Index;
       Node   : Schemas.Definition_Type_Access;
       Period : Ada.Real_Time.Time_Span;
-      Data   : Helios.Datas.Snapshot_Queue_Access;
+      Data   : Helios.Datas.Snapshot_Queue_Type;
    end record;
 
    --  The timer handler executed when the timer deadline has passed.
@@ -73,5 +73,11 @@ package Helios.Monitor is
    function Get_Period (Config  : in Util.Properties.Manager;
                         Name    : in String;
                         Default : in Natural) return Ada.Real_Time.Time_Span;
+
+private
+
+   --  Iterate over the plugin agents that are registered and execute
+   --  the <tt>Process</tt> procedure.
+   procedure Iterate (Process : not null access procedure (Agent : in out Agent_Type'Class));
 
 end Helios.Monitor;
