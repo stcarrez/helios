@@ -39,7 +39,7 @@ package body Helios.Schemas is
 
    function Allocate_Index (From : in Definition_Type_Access) return Value_Index is
    begin
-      if From.Kind = V_NONE then
+      if From.Kind = V_NONE and From.Parent = Root'Access then
          From.Index := From.Index + 1;
          return From.Index;
       else
