@@ -66,7 +66,7 @@ package body Helios.Monitor is
    --  ------------------------------
    --  Register the agent.
    --  ------------------------------
-   procedure Register (Agent  : in out Agent_Type'Class;
+   procedure Register (Agent  : in Agent_Type_Access;
                        Name   : in String;
                        Config : in Util.Properties.Manager) is
       Period : Integer
@@ -77,7 +77,7 @@ package body Helios.Monitor is
       end if;
       Agent.Period := Ada.Real_Time.Seconds (Period);
       Agent.Next := List;
-      List := Agent'Unchecked_Access;
+      List := Agent;
       Agent.Node := Schemas.Create_Definition (null, Name, Schemas.V_NONE);
       Agent.Start (Config);
    end Register;
