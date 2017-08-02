@@ -20,6 +20,7 @@ with Util.Commands.Drivers;
 with Util.Properties;
 with Util.Commands.Consoles;
 with Util.Commands.Consoles.Text;
+with Helios.Monitor.Agent;
 package Helios.Commands is
 
    subtype Argument_List is Util.Commands.Argument_List;
@@ -27,6 +28,7 @@ package Helios.Commands is
    type Context_Type is limited record
       Config_Path : Ada.Strings.Unbounded.Unbounded_String;
       Config      : Util.Properties.Manager;
+      Runtime     : Helios.Monitor.Agent.Runtime_Type;
    end record;
 
    package Drivers is
