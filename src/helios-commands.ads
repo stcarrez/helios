@@ -21,6 +21,8 @@ with Util.Properties;
 with Helios.Monitor.Agent;
 package Helios.Commands is
 
+   Error : exception;
+
    subtype Argument_List is Util.Commands.Argument_List;
 
    type Context_Type is limited record
