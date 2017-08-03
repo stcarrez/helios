@@ -58,7 +58,9 @@ package body Helios.Commands is
    exception
       when Ada.IO_Exceptions.Name_Error =>
          Log.Error ("Configuration file '{0}' does not exist.", Path);
+         Log.Error ("Use the '-c config' option to specify a configuration file.");
          Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
+         raise Error;
 
    end Load;
 
