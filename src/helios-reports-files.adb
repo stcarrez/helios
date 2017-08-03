@@ -17,6 +17,7 @@
 -----------------------------------------------------------------------
 with Ada.Streams.Stream_IO;
 with Ada.Calendar;
+with Ada.Directories;
 with Util.Serialize.IO.JSON;
 with Util.Streams.Texts;
 with Util.Streams.Files;
@@ -34,7 +35,11 @@ package body Helios.Reports.Files is
                            Event  : in out Util.Events.Timers.Timer_Ref'Class) is
       Pattern : constant String := Ada.Strings.Unbounded.To_String (Report.Path);
       Path    : constant String := Helios.Tools.Formats.Format (Pattern, Ada.Calendar.Clock);
+      Dir     : constant String := Ada.Directories.Containing_Directory (Path);
    begin
+      if not Ada.Directories.Exists (Dir) then
+         Ada.Directories.Create_Directory (Dir);
+      end if;
       Save_Snapshot (Path, Helios.Datas.Get_Report);
       if Report.Period /= Ada.Real_Time.Time_Span_Zero then
          Event.Repeat (Report.Period);
