@@ -62,7 +62,8 @@ package body Helios.Commands.Check is
          Load (Context);
          Monitor.Agent.Configure (Context.Runtime, Context.Config);
          Context.Runtime.Timers.Set_Timer (Report'Unchecked_Access, Timer,
-                                           Context.Runtime.Report_Period + Ada.Real_Time.Seconds (1));
+                                           Context.Runtime.Report_Period
+                                           + Ada.Real_Time.Seconds (1));
          Monitor.Agent.Run (Context.Runtime);
       end if;
    end Execute;
