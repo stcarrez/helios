@@ -25,14 +25,6 @@ package body Helios.Datas is
 
    Reports : Report_Queue_Type;
 
-   --  ------------------------------
-   --  Initialize the snapshot.
-   --  ------------------------------
-   procedure Initialize (Data : in out Snapshot_Type) is
-   begin
-      Data.Values := new Value_Array (1 .. Schemas.Get_Count);
-   end Initialize;
-
    function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Type_Access is
       Result : Snapshot_Type_Access := new Snapshot_Type;
       Count  : Value_Array_Index := Queue.Schema.Index * Value_Array_Index (Queue.Count);
