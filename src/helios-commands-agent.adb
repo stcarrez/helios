@@ -37,8 +37,9 @@ package body Helios.Commands.Agent is
       Mode  : constant String := Config.Get ("mode", "file");
       Timer : Util.Events.Timers.Timer_Ref;
    begin
+      Runtime.Report_Period := Helios.Monitor.Get_Period (Config, "period", 300);
       if Mode = "file" then
-         File_Report.Period := Helios.Monitor.Get_Period (Config, "period", 300);
+         File_Report.Period := Runtime.Report_Period;
          File_Report.Path := To_Unbounded_String (Config.Get ("pattern",
                                                   "report-%F-%H-%M-%S.json"));
          Runtime.Timers.Set_Timer (File_Report'Access, Timer, File_Report.Period);
@@ -58,8 +59,8 @@ package body Helios.Commands.Agent is
          Helios.Commands.Driver.Usage (Args);
       else
          Load (Context);
-         Monitor.Agent.Configure (Context.Runtime, Context.Config);
          Setup_Report (Context.Runtime, Context.Config.Get ("report"));
+         Monitor.Agent.Configure (Context.Runtime, Context.Config);
          Monitor.Agent.Run (Context.Runtime);
       end if;
 
