@@ -43,12 +43,6 @@ package Helios.Schemas is
       Name    : String (1 .. Len);
    end record;
 
-   --  Get the root definition tree.
-   function Get_Root return Definition_Type_Access;
-
-   --  Get the number of definition values.
-   function Get_Count return Value_Index;
-
    --  Add a new definition node to the definition.
    function Create_Definition (Into   : in Definition_Type_Access;
                                Name   : in String;
