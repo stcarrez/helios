@@ -32,6 +32,10 @@ package body Helios.Monitor.Agent is
                         Config  : in Util.Properties.Manager) is
       procedure Process (Name  : in String;
                          Value : in Util.Properties.Value);
+      procedure Configure (Name   : in String;
+                           Config : in Util.Properties.Manager);
+      procedure Build_Queue (Agent : in out Agent_Type'Class);
+      procedure Start_Timer (Agent : in out Agent_Type'Class);
 
       procedure Configure (Name   : in String;
                            Config : in Util.Properties.Manager) is
@@ -63,7 +67,7 @@ package body Helios.Monitor.Agent is
       procedure Build_Queue (Agent : in out Agent_Type'Class) is
          use type Ada.Real_Time.Time_Span;
 
-         Count : Natural := 1 + (Runtime.Report_Period / Agent.Period);
+         Count : constant Natural := 1 + (Runtime.Report_Period / Agent.Period);
       begin
          Helios.Datas.Initialize (Agent.Data, Agent.Node, Count);
       end Build_Queue;
