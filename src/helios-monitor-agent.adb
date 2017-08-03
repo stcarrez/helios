@@ -41,9 +41,7 @@ package body Helios.Monitor.Agent is
                            Config : in Util.Properties.Manager) is
          Agent : Agent_Type_Access;
       begin
-         if Name = "helios" then
-            Runtime.Report_Period := Get_Period (Config, "report_period", REPORT_PERIOD);
-         elsif Name = "ifnet" then
+         if Name = "ifnet" then
             Agent := Ifnet_Mon'Access;
          elsif Name = "cpu" then
             Agent := Cpu_Mon'Access;
