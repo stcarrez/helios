@@ -16,12 +16,13 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Strings.Unbounded;
+with Ada.Real_Time;
 with Util.Events.Timers;
 package Helios.Reports.Files is
 
    type File_Report_Type is limited new Util.Events.Timers.Timer with record
       Path   : Ada.Strings.Unbounded.Unbounded_String;
-      Period : Natural := 0;
+      Period : Ada.Real_Time.Time_Span := Ada.Real_Time.Time_Span_Zero;
    end record;
 
    --  The timer handler executed when the timer deadline has passed.
