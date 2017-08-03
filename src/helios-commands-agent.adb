@@ -54,7 +54,7 @@ package body Helios.Commands.Agent is
                       Args      : in Argument_List'Class;
                       Context   : in out Context_Type) is
    begin
-      if Args.Get_Count /= 1 then
+      if Args.Get_Count /= 0 then
          Helios.Commands.Driver.Usage (Args);
       else
          Load (Context);
