@@ -17,11 +17,14 @@
 -----------------------------------------------------------------------
 with Ada.Streams.Stream_IO;
 with Ada.Real_Time;
+with Ada.Calendar;
 with Util.Serialize.IO.JSON;
 with Util.Streams.Texts;
 with Util.Streams.Files;
+with Helios.Tools.Formats;
 package body Helios.Reports.Files is
 
+   use type Ada.Real_Time.Time_Span;
    use type Helios.Datas.Snapshot_Type_Access;
 
    --  ------------------------------
@@ -30,10 +33,12 @@ package body Helios.Reports.Files is
    overriding
    procedure Time_Handler (Report : in out File_Report_Type;
                            Event  : in out Util.Events.Timers.Timer_Ref'Class) is
+      Pattern : constant String := Ada.Strings.Unbounded.To_String (Report.Path);
+      Path    : constant String := Helios.Tools.Formats.Format (Pattern, Ada.Calendar.Clock);
    begin
-      Save_Snapshot (Ada.Strings.Unbounded.To_String (Report.Path), Helios.Datas.Get_Report);
-      if Report.Period > 0 then
-         Event.Repeat (Ada.Real_Time.Seconds (Report.Period));
+      Save_Snapshot (Path, Helios.Datas.Get_Report);
+      if Report.Period /= Ada.Real_Time.Time_Span_Zero then
+         Event.Repeat (Report.Period);
       end if;
    end Time_Handler;
 
