@@ -99,7 +99,11 @@ begin
    end;
 
 exception
+   when Helios.Commands.Error =>
+      Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
+
    when E : others =>
       Log.Error ("Some internal error occurred", E);
+      Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
 
 end Helios.Main;
