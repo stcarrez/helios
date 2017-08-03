@@ -45,6 +45,7 @@ begin
    Log_Config.Set ("log4j.appender.stdout.level", "INFO");
    Log_Config.Set ("log4j.appender.stdout.layout", "message");
    Log_Config.Set ("log4j.logger.Util", "FATAL");
+   Log_Config.Set ("log4j.logger.Util.Events", "ERROR");
    Log_Config.Set ("log4j.logger.Helios", "ERROR");
    Util.Log.Loggers.Initialize (Log_Config);
 
