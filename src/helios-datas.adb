@@ -21,13 +21,15 @@ package body Helios.Datas is
    use type Schemas.Definition_Type_Access;
    use type Schemas.Value_Index;
 
+   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Type_Access;
+
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Datas");
 
    Reports : Report_Queue_Type;
 
    function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Type_Access is
-      Result : Snapshot_Type_Access := new Snapshot_Type;
-      Count  : Value_Array_Index := Queue.Schema.Index * Value_Array_Index (Queue.Count);
+      Result : constant Snapshot_Type_Access := new Snapshot_Type;
+      Count  : constant Value_Array_Index := Queue.Schema.Index * Value_Array_Index (Queue.Count);
    begin
       Log.Info ("Allocate snapshot with {0} values", Value_Array_Index'Image (Count));
       Result.Schema := Queue.Schema;
