@@ -23,22 +23,6 @@ package body Helios.Schemas is
    Root          : aliased Definition_Type (Len => 0);
    Current_Index : Monitor_Index := 0;
 
-   --  ------------------------------
-   --  Get the root definition tree.
-   --  ------------------------------
-   function Get_Root return Definition_Type_Access is
-   begin
-      return Root'Access;
-   end Get_Root;
-
-   --  ------------------------------
-   --  Get the number of definition values.
-   --  ------------------------------
-   function Get_Count return Value_Index is
-   begin
-      return 0; --  Current_Index;
-   end Get_Count;
-
    function Allocate_Index (From : in Definition_Type_Access) return Value_Index is
    begin
       if From.Kind = V_NONE and From.Parent = Root'Access then
