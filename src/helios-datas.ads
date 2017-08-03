@@ -17,7 +17,6 @@
 -----------------------------------------------------------------------
 with Ada.Calendar;
 with Ada.Real_Time;
-with Ada.Finalization;
 with Helios.Schemas;
 
 --  == Data Representation ==
@@ -54,7 +53,6 @@ package Helios.Datas is
       Read_Pos  : Natural := 0;
       Write_Pos : Natural := 0;
       Schema    : Helios.Schemas.Definition_Type_Access;
-      --  Data      : Snapshot_Array (1 .. Max_Count);
       First     : Snapshot_Type_Access;
       Current   : Snapshot_Type_Access;
    end record;
