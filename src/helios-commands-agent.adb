@@ -17,10 +17,33 @@
 -----------------------------------------------------------------------
 with Ada.Real_Time;
 with Ada.Text_IO;
+with Util.Log;
+with Util.Properties;
+with Util.Events.Timers;
 with Helios.Monitor.Agent;
+with Helios.Reports.Files;
 package body Helios.Commands.Agent is
 
+   use Ada.Strings.Unbounded;
    use type Ada.Real_Time.Time_Span;
+
+   procedure Setup_Report (Runtime : in out Helios.Monitor.Agent.Runtime_Type;
+                           Config  : in Util.Properties.Manager);
+
+   File_Report : aliased Helios.Reports.Files.File_Report_Type;
+
+   procedure Setup_Report (Runtime : in out Helios.Monitor.Agent.Runtime_Type;
+                           Config  : in Util.Properties.Manager) is
+      Mode  : constant String := Config.Get ("mode", "file");
+      Timer : Util.Events.Timers.Timer_Ref;
+   begin
+      if Mode = "file" then
+         File_Report.Period := Helios.Monitor.Get_Period (Config, "period", 300);
+         File_Report.Path := To_Unbounded_String (Config.Get ("pattern",
+                                                  "report-%F-%H-%M-%S.json"));
+         Runtime.Timers.Set_Timer (File_Report'Access, Timer, File_Report.Period);
+      end if;
+   end Setup_Report;
 
    --  ------------------------------
    --  Execute a information command to report information about the agent and monitoring.
@@ -30,15 +53,20 @@ package body Helios.Commands.Agent is
                       Name      : in String;
                       Args      : in Argument_List'Class;
                       Context   : in out Context_Type) is
-      pragma Unreferenced (Command, Name);
    begin
       if Args.Get_Count /= 1 then
          Helios.Commands.Driver.Usage (Args);
       else
          Load (Context);
          Monitor.Agent.Configure (Context.Runtime, Context.Config);
+         Setup_Report (Context.Runtime, Context.Config.Get ("report"));
          Monitor.Agent.Run (Context.Runtime);
       end if;
+
+   exception
+      when Util.Properties.NO_PROPERTY =>
+         Command.Log (Util.Log.ERROR_LEVEL, Name, "Missing report configuration");
+         raise Error;
    end Execute;
 
    --  ------------------------------
