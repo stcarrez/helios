@@ -16,7 +16,6 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Streams.Stream_IO;
-with Ada.Real_Time;
 with Ada.Calendar;
 with Util.Serialize.IO.JSON;
 with Util.Streams.Texts;
@@ -46,8 +45,7 @@ package body Helios.Reports.Files is
    --  Write the collected snapshot in the file in JSON format.
    --  ------------------------------
    procedure Save_Snapshot (Path : in String;
-                            Data : in Helios.Datas.Snapshot_Type;
-                            Node : in Helios.Schemas.Definition_Type_Access) is
+                            Data : in Helios.Datas.Snapshot_Type) is
       File      : aliased Util.Streams.Files.File_Stream;
       Output    : aliased Util.Streams.Texts.Print_Stream;
       Stream    : Util.Serialize.IO.JSON.Output_Stream;
@@ -56,7 +54,7 @@ package body Helios.Reports.Files is
       Output.Initialize (File'Unchecked_Access);
       Stream.Initialize (Output'Unchecked_Access);
       Stream.Start_Document;
-      Write_Snapshot (Stream, Data, Helios.Schemas.Get_Root);
+      Write_Snapshot (Stream, Data, Data.Schema);
       Stream.End_Document;
       Stream.Close;
    end Save_Snapshot;
