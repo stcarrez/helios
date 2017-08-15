@@ -15,8 +15,13 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Util.Serialize.IO.JSON;
+with Util.Streams.Texts;
+with Util.Streams.Files;
+with Util.Http.Clients;
 package body Helios.Reports.Remote is
+
+   use Ada.Strings.Unbounded;
 
    task body Report_Task_Type is
       R      : Remote_Report_Access;
@@ -38,7 +43,9 @@ package body Helios.Reports.Remote is
       Report.Reporter.Start (Report);
    end Start;
 
+   --  ------------------------------
    --  The timer handler executed when the timer deadline has passed.
+   --  ------------------------------
    overriding
    procedure Time_Handler (Report : in out Remote_Report_Type;
                            Event  : in out Util.Events.Timers.Timer_Ref'Class) is
@@ -49,5 +56,28 @@ package body Helios.Reports.Remote is
          Event.Repeat (Report.Period);
       end if;
    end Time_Handler;
+
+   --  ------------------------------
+   --  Send a snapshot report to the server.
+   --  ------------------------------
+   procedure Send (Report : in out Remote_Report_Type;
+                   Data   : in Helios.Datas.Report_Queue_Type) is
+      Output    : aliased Util.Streams.Texts.Print_Stream;
+      Stream    : Util.Serialize.IO.JSON.Output_Stream;
+      Response  : Util.Http.Clients.Response;
+      Http      : Util.Http.Clients.Client;
+   begin
+      Output.Initialize (null, null, Size => 1_000_000);
+      Stream.Initialize (Output'Unchecked_Access);
+      Stream.Start_Document;
+      Write_Snapshot (Stream, Data.Snapshot.all, Data.Snapshot.Schema);
+      Stream.End_Document;
+      Stream.Close;
+      Http.Add_Header ("X-Requested-By", "helios");
+      Http.Add_Header ("Content-Type", "application/json");
+      Http.Add_Header ("Bearer", Ada.Strings.Unbounded.To_String (Report.Bearer));
+      Http.Add_Header ("Accept", "application/json");
+      Http.Post (To_String (Report.URI), Util.Streams.Texts.To_String (Output), Response);
+   end Send;
 
 end Helios.Reports.Remote;
