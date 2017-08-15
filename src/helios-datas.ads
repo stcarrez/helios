@@ -24,6 +24,7 @@ with Helios.Schemas;
 --  before being flushed.
 package Helios.Datas is
 
+   subtype Definition_Type_Access is Schemas.Definition_Type_Access;
    subtype Value_Index is Schemas.Value_Index;
    subtype Value_Array_Index is Value_Index range 1 .. Value_Index'Last;
 
@@ -35,6 +36,50 @@ package Helios.Datas is
 
    type Snapshot_Index is new Natural;
    type Report_Index is new Natural;
+
+   type Snapshot_Type is tagged limited private;
+
+   --  type Snapshot_Array is array (Positive range <>) of aliased Snapshot_Type;
+
+   type Snapshot_Queue_Type is limited private;
+
+   --  Initialize the snapshot queue for the schema.
+   procedure Initialize (Queue  : in out Snapshot_Queue_Type;
+                         Schema : in Helios.Schemas.Definition_Type_Access;
+                         Count  : in Positive);
+
+   --  Set the value in the snapshot.
+   procedure Set_Value (Into  : in out Snapshot_Type;
+                        Def   : in Schemas.Definition_Type_Access;
+                        Value : in Uint64);
+
+   --  Iterate over the values in the snapshot and collected for the definition node.
+   procedure Iterate (Data    : in Snapshot_Type;
+                      Node    : in Definition_Type_Access;
+                      Process : not null access procedure (Value : in Uint64));
+
+   procedure Iterate (Data    : in Snapshot_Type;
+                      Node    : in Definition_Type_Access;
+                      Process_Snapshot : not null access procedure (D : in Snapshot_Type;
+                                                                    N : in Definition_Type_Access);
+                      Process_Values  : not null access procedure (D : in Snapshot_Type;
+                                                                   N : in Definition_Type_Access));
+
+   --  Prepare the snapshot queue to collect new values.
+   procedure Prepare (Queue    : in out Snapshot_Queue_Type;
+                      Snapshot : out Snapshot_Type_Access);
+
+   type Snapshot_Report_Type is limited record
+      S : Natural;
+   end record;
+
+   type Report_Queue_Type is record
+      Snapshot : Snapshot_Type_Access;
+   end record;
+
+   function Get_Report return Report_Queue_Type;
+
+private
 
    type Snapshot_Type is tagged limited record
       Schema        : Helios.Schemas.Definition_Type_Access;
@@ -57,34 +102,5 @@ package Helios.Datas is
       Current   : Snapshot_Type_Access;
    end record;
    type Snapshot_Queue_Access is access all Snapshot_Queue_Type;
-
-   --  Initialize the snapshot queue for the schema.
-   procedure Initialize (Queue  : in out Snapshot_Queue_Type;
-                         Schema : in Helios.Schemas.Definition_Type_Access;
-                         Count  : in Positive);
-
-   --  Set the value in the snapshot.
-   procedure Set_Value (Into  : in out Snapshot_Type;
-                        Def   : in Schemas.Definition_Type_Access;
-                        Value : in Uint64);
-
-   --  Iterate over the values in the snapshot and collected for the definition node.
-   procedure Iterate (Data    : in Helios.Datas.Snapshot_Type;
-                      Node    : in Helios.Schemas.Definition_Type_Access;
-                      Process : not null access procedure (Value : in Uint64));
-
-   --  Prepare the snapshot queue to collect new values.
-   procedure Prepare (Queue    : in out Snapshot_Queue_Type;
-                      Snapshot : out Snapshot_Type_Access);
-
-   type Snapshot_Report_Type is limited record
-      S : Natural;
-   end record;
-
-   type Report_Queue_Type is record
-      Snapshot : Snapshot_Type_Access;
-   end record;
-
-   function Get_Report return Report_Queue_Type;
 
 end Helios.Datas;
