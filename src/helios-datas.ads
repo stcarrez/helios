@@ -68,6 +68,11 @@ package Helios.Datas is
                         Def   : in Schemas.Definition_Type_Access;
                         Value : in Uint64);
 
+   --  Iterate over the values in the snapshot and collected for the definition node.
+   procedure Iterate (Data    : in Helios.Datas.Snapshot_Type;
+                      Node    : in Helios.Schemas.Definition_Type_Access;
+                      Process : not null access procedure (Value : in Uint64));
+
    --  Prepare the snapshot queue to collect new values.
    procedure Prepare (Queue    : in out Snapshot_Queue_Type;
                       Snapshot : out Snapshot_Type_Access);
