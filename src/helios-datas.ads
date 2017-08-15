@@ -58,9 +58,7 @@ package Helios.Datas is
    procedure Prepare (Queue    : in out Snapshot_Queue_Type;
                       Snapshot : out Snapshot_Type_Access);
 
-   type Report_Queue_Type is record
-      Snapshot : Snapshot_Type_Access;
-   end record;
+   type Report_Queue_Type is private;
 
    function Get_Report return Report_Queue_Type;
 
@@ -100,5 +98,9 @@ private
       Current   : Snapshot_Type_Access;
    end record;
    type Snapshot_Queue_Access is access all Snapshot_Queue_Type;
+
+   type Report_Queue_Type is record
+      Snapshot : Snapshot_Type_Access;
+   end record;
 
 end Helios.Datas;
