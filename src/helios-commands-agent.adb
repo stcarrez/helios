@@ -49,6 +49,7 @@ package body Helios.Commands.Agent is
          Remote_Report.Period := Runtime.Report_Period;
          Remote_Report.URI := To_Unbounded_String (Config.Get ("remote_uri"));
          Helios.Reports.Remote.Start (Remote_Report'Access);
+         Runtime.Timers.Set_Timer (Remote_Report'Access, Timer, Remote_Report.Period);
       end if;
    end Setup_Report;
 
