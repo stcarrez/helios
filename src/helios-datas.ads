@@ -17,6 +17,7 @@
 -----------------------------------------------------------------------
 with Ada.Calendar;
 with Ada.Real_Time;
+with Util.Refs;
 with Helios.Schemas;
 
 --  == Data Representation ==
@@ -77,7 +78,7 @@ private
    type Value_Array is array (Value_Array_Index range <>) of Uint64;
    type Value_Array_Access is access all Value_Array;
 
-   type Snapshot_Type is tagged limited record
+   type Snapshot_Type is new Util.Refs.Ref_Entity with record
       Schema        : Helios.Schemas.Definition_Type_Access;
       Next          : Snapshot_Type_Access;
       Time          : Ada.Calendar.Time;
@@ -87,20 +88,18 @@ private
       Values        : Value_Array_Access;
    end record;
 
-   type Snapshot_Array is array (Positive range <>) of aliased Snapshot_Type;
+   package Snapshot_Refs is new Util.Refs.References (Element_Type   => Snapshot_Type,
+                                                      Element_Access => Snapshot_Type_Access);
 
    type Snapshot_Queue_Type is limited record
       Count     : Natural := 0;
-      Read_Pos  : Natural := 0;
-      Write_Pos : Natural := 0;
       Schema    : Helios.Schemas.Definition_Type_Access;
-      First     : Snapshot_Type_Access;
-      Current   : Snapshot_Type_Access;
+      Current   : Snapshot_Refs.Ref;
    end record;
    type Snapshot_Queue_Access is access all Snapshot_Queue_Type;
 
    type Report_Queue_Type is record
-      Snapshot : Snapshot_Type_Access;
+      Snapshot : Snapshot_Refs.Ref;
    end record;
 
 end Helios.Datas;
