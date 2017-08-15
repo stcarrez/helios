@@ -68,6 +68,21 @@ package body Helios.Datas is
    end Set_Value;
 
    --  ------------------------------
+   --  Iterate over the values in the snapshot and collected for the definition node.
+   --  ------------------------------
+   procedure Iterate (Data    : in Helios.Datas.Snapshot_Type;
+                      Node    : in Helios.Schemas.Definition_Type_Access;
+                      Process : not null access procedure (Value : in Uint64)) is
+      Count      : constant Helios.Datas.Value_Array_Index := Node.Index;
+      Pos        : Helios.Datas.Value_Array_Index := Node.Index;
+   begin
+      while Pos < Data.Offset loop
+         Process (Data.Values (Pos));
+         Pos := Pos + Count;
+      end loop;
+   end Iterate;
+
+   --  ------------------------------
    --  Prepare the snapshot queue to collect new values.
    --  ------------------------------
    procedure Prepare (Queue    : in out Snapshot_Queue_Type;
