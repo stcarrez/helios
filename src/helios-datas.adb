@@ -105,6 +105,20 @@ package body Helios.Datas is
    end Iterate;
 
    --  ------------------------------
+   --  Iterate over the values of the reports.
+   --  ------------------------------
+   procedure Iterate (Report  : in Report_Queue_Type;
+                      Process : not null access procedure (Data : in Snapshot_Type;
+                                                           Node : in Definition_Type_Access)) is
+      Snapshot  : Helios.Datas.Snapshot_Type_Access := Report.Snapshot;
+   begin
+      while Snapshot /= null loop
+         Process (Snapshot.all, Snapshot.Schema);
+         Snapshot := Snapshot.Next;
+      end loop;
+   end Iterate;
+
+   --  ------------------------------
    --  Prepare the snapshot queue to collect new values.
    --  ------------------------------
    procedure Prepare (Queue    : in out Snapshot_Queue_Type;
