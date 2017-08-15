@@ -69,15 +69,16 @@ package Helios.Datas is
    procedure Prepare (Queue    : in out Snapshot_Queue_Type;
                       Snapshot : out Snapshot_Type_Access);
 
-   type Snapshot_Report_Type is limited record
-      S : Natural;
-   end record;
-
    type Report_Queue_Type is record
       Snapshot : Snapshot_Type_Access;
    end record;
 
    function Get_Report return Report_Queue_Type;
+
+   --  Iterate over the values of the reports.
+   procedure Iterate (Report  : in Report_Queue_Type;
+                      Process : not null access procedure (Data : in Snapshot_Type;
+                                                           Node : in Definition_Type_Access));
 
 private
 
