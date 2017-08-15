@@ -17,11 +17,13 @@
 -----------------------------------------------------------------------
 with Util.Serialize.IO.JSON;
 with Util.Streams.Texts;
-with Util.Streams.Files;
 with Util.Http.Clients;
+with Util.Log.Loggers;
 package body Helios.Reports.Remote is
 
    use Ada.Strings.Unbounded;
+
+   Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Reports.Remote");
 
    task body Report_Task_Type is
       R      : Remote_Report_Access;
@@ -34,11 +36,13 @@ package body Helios.Reports.Remote is
       end select;
       loop
          R.Queue.Dequeue (Data);
+         R.Send (Data);
       end loop;
    end Report_Task_Type;
 
    procedure Start (Report : in Remote_Report_Access) is
    begin
+      Log.Info ("Starting remote report task");
       Report.Reporter := new Report_Task_Type;
       Report.Reporter.Start (Report);
    end Start;
@@ -66,6 +70,7 @@ package body Helios.Reports.Remote is
       Stream    : Util.Serialize.IO.JSON.Output_Stream;
       Response  : Util.Http.Clients.Response;
       Http      : Util.Http.Clients.Client;
+      URI       : constant String := To_String (Report.URI);
    begin
       Output.Initialize (null, null, Size => 1_000_000);
       Stream.Initialize (Output'Unchecked_Access);
@@ -77,7 +82,8 @@ package body Helios.Reports.Remote is
       Http.Add_Header ("Content-Type", "application/json");
       Http.Add_Header ("Bearer", Ada.Strings.Unbounded.To_String (Report.Bearer));
       Http.Add_Header ("Accept", "application/json");
-      Http.Post (To_String (Report.URI), Util.Streams.Texts.To_String (Output), Response);
+      Log.Info ("Sending report to {0}", URI);
+      Http.Post (URI, Util.Streams.Texts.To_String (Output), Response);
    end Send;
 
 end Helios.Reports.Remote;
