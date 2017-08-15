@@ -44,48 +44,49 @@ package body Helios.Reports is
    procedure Write_Snapshot (Stream : in out Util.Serialize.IO.Output_Stream'Class;
                              Data   : in Helios.Datas.Snapshot_Type;
                              Node   : in Helios.Schemas.Definition_Type_Access) is
-      Child      : Helios.Schemas.Definition_Type_Access;
-      Value      : Uint64;
-      Prev_Value : Uint64;
-      Offset     : Long_Long_Integer;
-      Pos        : Helios.Datas.Value_Array_Index;
-      Count      : constant Helios.Datas.Value_Array_Index := Data.Schema.Index;
+
+      procedure Write_Values (Data   : in Helios.Datas.Snapshot_Type;
+                              Node   : in Helios.Schemas.Definition_Type_Access) is
+         Prev_Value : Uint64;
+
+         procedure Write_Value (Value : in Uint64) is
+            Offset : Long_Long_Integer;
+         begin
+            if Value > Prev_Value then
+               Offset := Long_Long_Integer (Value - Prev_Value);
+            else
+               Offset := -Long_Long_Integer (Prev_Value - Value);
+            end if;
+            Prev_Value := Value;
+            if Offset < Long_Long_Integer (Integer'Last)
+              and Offset > Long_Long_Integer (Integer'First)
+            then
+               Stream.Write_Entity (Node.Name, Integer (Offset));
+            else
+               Stream.Write_Long_Entity (Node.Name, Offset);
+            end if;
+         end Write_Value;
+      begin
+         Prev_Value := 0;
+         Stream.Start_Array (Node.Name);
+         Helios.Datas.Iterate (Data, Node, Write_Value'Access);
+         Stream.End_Array (Node.Name);
+      end Write_Values;
+
+      procedure Write_Snapshot (Data   : in Helios.Datas.Snapshot_Type;
+                                Node   : in Helios.Schemas.Definition_Type_Access) is
+      begin
+         Stream.Start_Entity (Node.Name);
+         Stream.Write_Entity ("period", 10);
+         --  Write_Timestamp (Stream, "timestamp", Data.Start_Time);
+         Stream.Start_Entity ("snapshot");
+         Helios.Datas.Iterate (Data, Node, Write_Snapshot'Access, Write_Values'Access);
+         Stream.End_Entity ("snapshot");
+         Stream.End_Entity (Node.Name);
+      end Write_Snapshot;
+
    begin
-      Stream.Start_Entity (Node.Name);
-      Stream.Write_Entity ("period", 10);
-      Write_Timestamp (Stream, "timestamp", Data.Start_Time);
-      Stream.Start_Entity ("snapshot");
-      Child := Node.Child;
-      while Child /= null loop
-         if Child.Child /= null then
-            Write_Snapshot (Stream, Data, Child);
-         elsif Child.Index > 0 then
-            Stream.Start_Array (Child.Name);
-            Prev_Value := 0;
-            Pos := Child.Index;
-            while Pos < Data.Offset loop
-               Value := Data.Values (Pos);
-               Pos := Pos + Count;
-               if Value > Prev_Value then
-                  Offset := Long_Long_Integer (Value - Prev_Value);
-               else
-                  Offset := -Long_Long_Integer (Prev_Value - Value);
-               end if;
-               Prev_Value := Value;
-               if Offset < Long_Long_Integer (Integer'Last)
-                 and Offset > Long_Long_Integer (Integer'First)
-               then
-                  Stream.Write_Entity (Child.Name, Integer (Offset));
-               else
-                  Stream.Write_Long_Entity (Child.Name, Offset);
-               end if;
-            end loop;
-            Stream.End_Array (Child.Name);
-         end if;
-         Child := Child.Next;
-      end loop;
-      Stream.End_Entity ("snapshot");
-      Stream.End_Entity (Node.Name);
+      Write_Snapshot (Data, Node);
    end Write_Snapshot;
 
 end Helios.Reports;
