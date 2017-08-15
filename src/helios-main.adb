@@ -23,6 +23,7 @@ with GNAT.Command_Line;
 with Util.Log.Loggers;
 with Util.Properties;
 with Util.Commands;
+with Util.Http.Clients.Curl;
 with Helios.Commands;
 procedure Helios.Main is
 
@@ -50,6 +51,7 @@ begin
    Util.Log.Loggers.Initialize (Log_Config);
 
    Helios.Commands.Initialize;
+   Util.Http.Clients.Curl.Register;
    Initialize_Option_Scan (Stop_At_First_Non_Switch => True, Section_Delimiters => "targs");
    --  Parse the command line
    loop
@@ -78,7 +80,7 @@ begin
    if Verbose or Debug then
       Log_Config.Set ("log4j.appender.console.level", "INFO");
       Log_Config.Set ("log4j.logger.Util", "WARN");
-      Log_Config.Set ("log4j.logger.Helios", "ERR");
+      Log_Config.Set ("log4j.logger.Helios", "DEBUG");
    end if;
    if Debug then
       Log_Config.Set ("log4j.appender.console.level", "DEBUG");
