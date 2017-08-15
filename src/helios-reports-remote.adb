@@ -84,6 +84,11 @@ package body Helios.Reports.Remote is
       Http.Add_Header ("Accept", "application/json");
       Log.Info ("Sending report to {0}", URI);
       Http.Post (URI, Util.Streams.Texts.To_String (Output), Response);
+
+   exception
+      when E : others =>
+         Log.Error ("Error when sending report", E);
+
    end Send;
 
 end Helios.Reports.Remote;
