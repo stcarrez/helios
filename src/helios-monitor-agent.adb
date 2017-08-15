@@ -30,6 +30,8 @@ package body Helios.Monitor.Agent is
    --  ------------------------------
    procedure Configure (Runtime : in out Runtime_Type;
                         Config  : in Util.Properties.Manager) is
+      use type Ada.Real_Time.Time_Span;
+
       procedure Process (Name  : in String;
                          Value : in Util.Properties.Value);
       procedure Configure (Name   : in String;
@@ -63,17 +65,19 @@ package body Helios.Monitor.Agent is
       end Process;
 
       procedure Build_Queue (Agent : in out Agent_Type'Class) is
-         use type Ada.Real_Time.Time_Span;
-
          Count : constant Natural := 1 + (Runtime.Report_Period / Agent.Period);
       begin
          Helios.Datas.Initialize (Agent.Data, Agent.Node, Count);
       end Build_Queue;
 
+      Start_Delay  : Ada.Real_Time.Time_Span := Ada.Real_Time.Milliseconds (100);
+      Spread_Delay : constant Ada.Real_Time.Time_Span := Ada.Real_Time.Microseconds (100);
+
       procedure Start_Timer (Agent : in out Agent_Type'Class) is
          Timer : Util.Events.Timers.Timer_Ref;
       begin
-         Runtime.Timers.Set_Timer (Agent'Unchecked_Access, Timer, Agent.Period);
+         Runtime.Timers.Set_Timer (Agent'Unchecked_Access, Timer, Start_Delay);
+         Start_Delay := Start_Delay + Spread_Delay;
       end Start_Timer;
 
    begin
