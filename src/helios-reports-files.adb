@@ -21,11 +21,14 @@ with Ada.Directories;
 with Util.Serialize.IO.JSON;
 with Util.Streams.Texts;
 with Util.Streams.Files;
+with Util.Log.Loggers;
 with Helios.Tools.Formats;
 package body Helios.Reports.Files is
 
    use type Ada.Real_Time.Time_Span;
    use type Helios.Datas.Snapshot_Type_Access;
+
+   Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Reports.Files");
 
    --  ------------------------------
    --  The timer handler executed when the timer deadline has passed.
@@ -38,6 +41,7 @@ package body Helios.Reports.Files is
       Dir     : constant String := Ada.Directories.Containing_Directory (Path);
    begin
       if not Ada.Directories.Exists (Dir) then
+         Log.Info ("Creating directory {0}", Dir);
          Ada.Directories.Create_Directory (Dir);
       end if;
       Save_Snapshot (Path, Helios.Datas.Get_Report);
@@ -65,6 +69,7 @@ package body Helios.Reports.Files is
       end Write;
 
    begin
+      Log.Info ("Saving snapshot to {0}", Path);
       File.Create (Ada.Streams.Stream_IO.Out_File, Path);
       Output.Initialize (File'Unchecked_Access);
       Stream.Initialize (Output'Unchecked_Access);
