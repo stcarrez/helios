@@ -25,21 +25,10 @@ with Helios.Schemas;
 package Helios.Datas is
 
    subtype Definition_Type_Access is Schemas.Definition_Type_Access;
-   subtype Value_Index is Schemas.Value_Index;
-   subtype Value_Array_Index is Value_Index range 1 .. Value_Index'Last;
-
-   type Value_Array is array (Value_Array_Index range <>) of Uint64;
-   type Value_Array_Access is access all Value_Array;
 
    type Snapshot_Type;
    type Snapshot_Type_Access is access all Snapshot_Type;
-
-   type Snapshot_Index is new Natural;
-   type Report_Index is new Natural;
-
    type Snapshot_Type is tagged limited private;
-
-   --  type Snapshot_Array is array (Positive range <>) of aliased Snapshot_Type;
 
    type Snapshot_Queue_Type is limited private;
 
@@ -81,6 +70,14 @@ package Helios.Datas is
                                                            Node : in Definition_Type_Access));
 
 private
+   subtype Value_Index is Schemas.Value_Index;
+   subtype Value_Array_Index is Value_Index range 1 .. Value_Index'Last;
+
+   type Snapshot_Index is new Natural;
+   type Report_Index is new Natural;
+
+   type Value_Array is array (Value_Array_Index range <>) of Uint64;
+   type Value_Array_Access is access all Value_Array;
 
    type Snapshot_Type is tagged limited record
       Schema        : Helios.Schemas.Definition_Type_Access;
