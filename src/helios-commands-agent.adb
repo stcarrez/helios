@@ -22,6 +22,7 @@ with Util.Properties;
 with Util.Events.Timers;
 with Helios.Monitor.Agent;
 with Helios.Reports.Files;
+with Helios.Reports.Remote;
 package body Helios.Commands.Agent is
 
    use Ada.Strings.Unbounded;
@@ -30,7 +31,8 @@ package body Helios.Commands.Agent is
    procedure Setup_Report (Runtime : in out Helios.Monitor.Agent.Runtime_Type;
                            Config  : in Util.Properties.Manager);
 
-   File_Report : aliased Helios.Reports.Files.File_Report_Type;
+   File_Report   : aliased Helios.Reports.Files.File_Report_Type;
+   Remote_Report : aliased Helios.Reports.Remote.Remote_Report_Type;
 
    procedure Setup_Report (Runtime : in out Helios.Monitor.Agent.Runtime_Type;
                            Config  : in Util.Properties.Manager) is
@@ -43,6 +45,10 @@ package body Helios.Commands.Agent is
          File_Report.Path := To_Unbounded_String (Config.Get ("pattern",
                                                   "report-%F-%H-%M-%S.json"));
          Runtime.Timers.Set_Timer (File_Report'Access, Timer, File_Report.Period);
+      else
+         Remote_Report.Period := Runtime.Report_Period;
+         Remote_Report.URI := To_Unbounded_String (Config.Get ("remote_uri"));
+         Helios.Reports.Remote.Start (Remote_Report'Access);
       end if;
    end Setup_Report;
 
