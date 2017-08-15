@@ -83,6 +83,28 @@ package body Helios.Datas is
    end Iterate;
 
    --  ------------------------------
+   --  Iterate over the values in the snapshot and collected for the definition node.
+   --  ------------------------------
+   procedure Iterate (Data    : in Helios.Datas.Snapshot_Type;
+                      Node    : in Helios.Schemas.Definition_Type_Access;
+                      Process_Snapshot : not null access procedure (D : in Snapshot_Type;
+                                                                    N : in Definition_Type_Access);
+                      Process_Values  : not null access procedure (D : in Snapshot_Type;
+                                                                   N : in Definition_Type_Access)) is
+      Child : Helios.Schemas.Definition_Type_Access;
+   begin
+      Child := Node.Child;
+      while Child /= null loop
+         if Child.Child /= null then
+            Process_Snapshot (Data, Child);
+         elsif Child.Index > 0 then
+            Process_Values (Data, Child);
+         end if;
+         Child := Child.Next;
+      end loop;
+   end Iterate;
+
+   --  ------------------------------
    --  Prepare the snapshot queue to collect new values.
    --  ------------------------------
    procedure Prepare (Queue    : in out Snapshot_Queue_Type;
