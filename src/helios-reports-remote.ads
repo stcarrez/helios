@@ -50,4 +50,8 @@ package Helios.Reports.Remote is
    procedure Time_Handler (Report : in out Remote_Report_Type;
                            Event  : in out Util.Events.Timers.Timer_Ref'Class);
 
+   --  Send a snapshot report to the server.
+   procedure Send (Report : in out Remote_Report_Type;
+                   Data   : in Helios.Datas.Report_Queue_Type);
+
 end Helios.Reports.Remote;
