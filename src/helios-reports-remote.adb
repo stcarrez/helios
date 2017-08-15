@@ -71,11 +71,18 @@ package body Helios.Reports.Remote is
       Response  : Util.Http.Clients.Response;
       Http      : Util.Http.Clients.Client;
       URI       : constant String := To_String (Report.URI);
+
+      procedure Write (Data : in Helios.Datas.Snapshot_Type;
+                       Node : in Helios.Schemas.Definition_Type_Access) is
+      begin
+         Write_Snapshot (Stream, Data, Node);
+      end Write;
+
    begin
       Output.Initialize (null, null, Size => 1_000_000);
       Stream.Initialize (Output'Unchecked_Access);
       Stream.Start_Document;
-      Write_Snapshot (Stream, Data.Snapshot.all, Data.Snapshot.Schema);
+      Helios.Datas.Iterate (Data, Write'Access);
       Stream.End_Document;
       Stream.Close;
       Http.Add_Header ("X-Requested-By", "helios");
