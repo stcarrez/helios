@@ -21,22 +21,23 @@ package body Helios.Datas is
    use type Schemas.Definition_Type_Access;
    use type Schemas.Value_Index;
 
-   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Type_Access;
+   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Refs.Ref;
 
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Datas");
 
    Reports : Report_Queue_Type;
 
-   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Type_Access is
-      Result : constant Snapshot_Type_Access := new Snapshot_Type;
-      Count  : constant Value_Array_Index := Queue.Schema.Index * Value_Array_Index (Queue.Count);
+   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Refs.Ref is
+      Result   : constant Snapshot_Refs.Ref := Snapshot_Refs.Create;
+      Snapshot : constant Snapshot_Type_Access := Result.Value;
+      Count    : constant Value_Array_Index := Queue.Schema.Index * Value_Array_Index (Queue.Count);
    begin
       Log.Info ("Allocate snapshot with {0} values", Value_Array_Index'Image (Count));
-      Result.Schema := Queue.Schema;
-      Result.Offset := 0;
-      Result.Values := new Value_Array (1 .. Count);
-      Result.Values.all := (others => 0);
-      Result.Start_Time := Ada.Real_Time.Clock;
+      Snapshot.Schema := Queue.Schema;
+      Snapshot.Offset := 0;
+      Snapshot.Values := new Value_Array (1 .. Count);
+      Snapshot.Values.all := (others => 0);
+      Snapshot.Start_Time := Ada.Real_Time.Clock;
       return Result;
    end Allocate;
 
@@ -110,7 +111,7 @@ package body Helios.Datas is
    procedure Iterate (Report  : in Report_Queue_Type;
                       Process : not null access procedure (Data : in Snapshot_Type;
                                                            Node : in Definition_Type_Access)) is
-      Snapshot  : Helios.Datas.Snapshot_Type_Access := Report.Snapshot;
+      Snapshot  : Helios.Datas.Snapshot_Type_Access := Report.Snapshot.Value;
    begin
       while Snapshot /= null loop
          Process (Snapshot.all, Snapshot.Schema);
@@ -124,20 +125,24 @@ package body Helios.Datas is
    procedure Prepare (Queue    : in out Snapshot_Queue_Type;
                       Snapshot : out Snapshot_Type_Access) is
    begin
-      Snapshot := Queue.Current;
+      Snapshot := Queue.Current.Value;
       Snapshot.Offset := Snapshot.Offset + Queue.Schema.Index;
       if Snapshot.Offset >= Snapshot.Values'Last then
-         Snapshot.Next := Reports.Snapshot;
-         Reports.Snapshot := Snapshot;
+         Snapshot.Next := Reports.Snapshot.Value;
+         Reports.Snapshot := Queue.Current;
          Queue.Current := Allocate (Queue);
-         Snapshot.End_Time := Queue.Current.Start_Time;
-         Snapshot := Queue.Current;
+         Snapshot := Queue.Current.Value;
+         Snapshot.End_Time := Snapshot.Start_Time;
       end if;
    end Prepare;
 
+   Empty_Snapshot : Snapshot_Refs.Ref;
+
    function Get_Report return Report_Queue_Type is
+      Result : Report_Queue_Type := Reports;
    begin
-      return Reports;
+      Reports.Snapshot := Empty_Snapshot;
+      return Result;
    end Get_Report;
 
 end Helios.Datas;
