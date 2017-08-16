@@ -18,12 +18,36 @@
 with Helios.Monitor.CPU;
 with Helios.Monitor.Ifnet;
 with Helios.Monitor.Disks;
+with Helios.Monitor.Sysfile;
 
 package body Helios.Monitor.Agent is
+
+   function Get_Agent (Name   : in String;
+                       Config : in Util.Properties.Manager) return Agent_Type_Access;
 
    Cpu_Mon     : aliased Helios.Monitor.CPU.Agent_Type;
    Ifnet_Mon   : aliased Helios.Monitor.Ifnet.Agent_Type;
    Disk_Mon    : aliased Helios.Monitor.Disks.Agent_Type;
+
+   --  ------------------------------
+   --  Get the monitoring agent given its name and configuration.
+   --  ------------------------------
+   function Get_Agent (Name   : in String;
+                       Config : in Util.Properties.Manager) return Agent_Type_Access is
+   begin
+      if Name = "ifnet" then
+         return Ifnet_Mon'Access;
+      elsif Name = "cpu" then
+         return Cpu_Mon'Access;
+      elsif Name = "disks" then
+         return Disk_Mon'Access;
+      end if;
+      if Config.Get ("plugin", "") = "sysfile" then
+         return new Helios.Monitor.Sysfile.Agent_Type;
+      else
+         return null;
+      end if;
+   end Get_Agent;
 
    --  ------------------------------
    --  Configure the agent plugins.
@@ -41,15 +65,8 @@ package body Helios.Monitor.Agent is
 
       procedure Configure (Name   : in String;
                            Config : in Util.Properties.Manager) is
-         Agent : Agent_Type_Access;
+         Agent : constant Agent_Type_Access := Get_Agent (Name, Config);
       begin
-         if Name = "ifnet" then
-            Agent := Ifnet_Mon'Access;
-         elsif Name = "cpu" then
-            Agent := Cpu_Mon'Access;
-         elsif Name = "disks" then
-            Agent := Disk_Mon'Access;
-         end if;
          if Agent /= null then
             Register (Agent, Name, Config);
          end if;
