@@ -23,6 +23,7 @@ with Util.Streams.Texts;
 with Util.Streams.Files;
 with Util.Log.Loggers;
 with Helios.Tools.Formats;
+with Helios.Monitor;
 package body Helios.Reports.Files is
 
    use type Ada.Real_Time.Time_Span;
@@ -44,7 +45,7 @@ package body Helios.Reports.Files is
          Log.Info ("Creating directory {0}", Dir);
          Ada.Directories.Create_Directory (Dir);
       end if;
-      Save_Snapshot (Path, Helios.Datas.Get_Report);
+      Save_Snapshot (Path, Helios.Monitor.Get_Report);
       if Report.Period /= Ada.Real_Time.Time_Span_Zero then
          Event.Repeat (Report.Period);
       end if;
