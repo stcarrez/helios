@@ -21,24 +21,24 @@ package body Helios.Datas is
    use type Schemas.Definition_Type_Access;
    use type Schemas.Value_Index;
 
-   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Refs.Ref;
+   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Type_Access;
 
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Datas");
 
    Reports : Report_Queue_Type;
 
-   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Refs.Ref is
-      Result   : constant Snapshot_Refs.Ref := Snapshot_Refs.Create;
-      Snapshot : constant Snapshot_Type_Access := Result.Value;
+   function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Type_Access is
+      Snapshot : constant Snapshot_Type_Access := new Snapshot_Type;
       Count    : constant Value_Array_Index := Queue.Schema.Index * Value_Array_Index (Queue.Count);
    begin
       Log.Info ("Allocate snapshot with {0} values", Value_Array_Index'Image (Count));
       Snapshot.Schema := Queue.Schema;
       Snapshot.Offset := 0;
+      Snapshot.Count  := Queue.Schema.Index;
       Snapshot.Values := new Value_Array (1 .. Count);
       Snapshot.Values.all := (others => 0);
       Snapshot.Start_Time := Ada.Real_Time.Clock;
-      return Result;
+      return Snapshot;
    end Allocate;
 
    --  ------------------------------
@@ -74,9 +74,12 @@ package body Helios.Datas is
    procedure Iterate (Data    : in Helios.Datas.Snapshot_Type;
                       Node    : in Helios.Schemas.Definition_Type_Access;
                       Process : not null access procedure (Value : in Uint64)) is
-      Count      : constant Helios.Datas.Value_Array_Index := Node.Index;
+      Count      : constant Helios.Datas.Value_Array_Index := Data.Count;
       Pos        : Helios.Datas.Value_Array_Index := Node.Index;
    begin
+      Log.Debug ("Iterate {0} from {1} to {2} step {3}", Node.Name,
+                 Value_Array_Index'Image (Count),
+                 Value_Array_Index'Image (Pos));
       while Pos < Data.Offset loop
          Process (Data.Values (Pos));
          Pos := Pos + Count;
@@ -111,12 +114,16 @@ package body Helios.Datas is
    procedure Iterate (Report  : in Report_Queue_Type;
                       Process : not null access procedure (Data : in Snapshot_Type;
                                                            Node : in Definition_Type_Access)) is
-      Snapshot  : Helios.Datas.Snapshot_Type_Access := Report.Snapshot.Value;
+      List      : constant Snapshot_List_Access := Report.Snapshot.Value;
+      Snapshot  : Snapshot_Type_Access;
    begin
-      while Snapshot /= null loop
-         Process (Snapshot.all, Snapshot.Schema);
-         Snapshot := Snapshot.Next;
-      end loop;
+      if List /= null then
+         Snapshot := List.First;
+         while Snapshot /= null loop
+            Process (Snapshot.all, Snapshot.Schema);
+            Snapshot := Snapshot.Next;
+         end loop;
+      end if;
    end Iterate;
 
    --  ------------------------------
@@ -125,16 +132,28 @@ package body Helios.Datas is
    procedure Prepare (Queue    : in out Snapshot_Queue_Type;
                       Snapshot : out Snapshot_Type_Access) is
    begin
-      Snapshot := Queue.Current.Value;
-      Snapshot.Offset := Snapshot.Offset + Queue.Schema.Index;
+      Snapshot := Queue.Current;
+      Snapshot.Offset := Snapshot.Offset + Snapshot.Count;
       if Snapshot.Offset >= Snapshot.Values'Last then
-         Snapshot.Next := Reports.Snapshot.Value;
-         Reports.Snapshot := Queue.Current;
-         Queue.Current := Allocate (Queue);
-         Snapshot := Queue.Current.Value;
-         Snapshot.End_Time := Snapshot.Start_Time;
+         Flush (Queue);
+         Snapshot := Queue.Current;
       end if;
    end Prepare;
+
+   --  ------------------------------
+   --  Flush the snapshot to start a fresh one for the queue.
+   --  ------------------------------
+   procedure Flush (Queue : in out Snapshot_Queue_Type) is
+      Snapshot : Snapshot_Type_Access := Queue.Current;
+   begin
+      if Reports.Snapshot.Is_Null then
+         Reports.Snapshot := Snapshot_Refs.Create;
+      end if;
+      Snapshot.Next := Reports.Snapshot.Value.First;
+      Reports.Snapshot.Value.First := Queue.Current;
+      Queue.Current := Allocate (Queue);
+      Snapshot.End_Time := Queue.Current.Start_Time;
+   end Flush;
 
    Empty_Snapshot : Snapshot_Refs.Ref;
 
