@@ -96,6 +96,20 @@ package body Helios.Monitor is
    end Register;
 
    --  ------------------------------
+   --  Get the current report and prepare the plugin agents for a new snapshot.
+   --  ------------------------------
+   function Get_Report return Helios.Datas.Report_Queue_Type is
+      procedure Flush (Agent : in out Agent_Type'Class);
+      procedure Flush (Agent : in out Agent_Type'Class) is
+      begin
+         Helios.Datas.Flush (Agent.Data);
+      end Flush;
+   begin
+      Iterate (Flush'Access);
+      return Helios.Datas.Get_Report;
+   end Get_Report;
+
+   --  ------------------------------
    --  Iterate over the plugin agents that are registered and execute
    --  the <tt>Process</tt> procedure.
    --  ------------------------------
