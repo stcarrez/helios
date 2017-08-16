@@ -24,7 +24,7 @@ package body Helios.Monitor.Sysfile is
    overriding
    procedure Start (Agent  : in out Agent_Type;
                     Config : in Util.Properties.Manager) is
-      Values : constant String := Config.Get ("values");
+      Values : constant String := Config.Get ("values", "*");
    begin
       Agent.Path := Config.Get ("path");
       Agent.Value := Agent.Create_Definition ("value", Values);
@@ -41,9 +41,7 @@ package body Helios.Monitor.Sysfile is
    begin
       Line.Open (Path);
       Line.Read;
-      if not Line.Is_Eof then
-         Values.Set_Value (Agent.Value, Line.Get_Value (1));
-      end if;
+      Values.Set_Value (Agent.Value, Line.Get_Value (1));
    end Collect;
 
 end Helios.Monitor.Sysfile;
