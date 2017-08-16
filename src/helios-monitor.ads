@@ -75,6 +75,9 @@ package Helios.Monitor is
                         Name    : in String;
                         Default : in Natural) return Ada.Real_Time.Time_Span;
 
+   --  Get the current report and prepare the plugin agents for a new snapshot.
+   function Get_Report return Helios.Datas.Report_Queue_Type;
+
 private
 
    --  Iterate over the plugin agents that are registered and execute
