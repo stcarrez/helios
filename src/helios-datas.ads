@@ -59,6 +59,9 @@ package Helios.Datas is
    procedure Prepare (Queue    : in out Snapshot_Queue_Type;
                       Snapshot : out Snapshot_Type_Access);
 
+   --  Flush the snapshot to start a fresh one for the queue.
+   procedure Flush (Queue : in out Snapshot_Queue_Type);
+
    type Report_Queue_Type is private;
 
    function Get_Report return Report_Queue_Type;
@@ -78,9 +81,10 @@ private
    type Value_Array is array (Value_Array_Index range <>) of Uint64;
    type Value_Array_Access is access all Value_Array;
 
-   type Snapshot_Type is new Util.Refs.Ref_Entity with record
+   type Snapshot_Type is tagged limited record
       Schema        : Helios.Schemas.Definition_Type_Access;
       Next          : Snapshot_Type_Access;
+      Count         : Value_Index := 0;
       Time          : Ada.Calendar.Time;
       Start_Time    : Ada.Real_Time.Time;
       End_Time      : Ada.Real_Time.Time;
@@ -88,13 +92,18 @@ private
       Values        : Value_Array_Access;
    end record;
 
-   package Snapshot_Refs is new Util.Refs.References (Element_Type   => Snapshot_Type,
-                                                      Element_Access => Snapshot_Type_Access);
+   type Snapshot_List is new Util.Refs.Ref_Entity with record
+      First : Snapshot_Type_Access;
+   end record;
+   type Snapshot_List_Access is access all Snapshot_List;
+
+   package Snapshot_Refs is new Util.Refs.References (Element_Type   => Snapshot_List,
+                                                      Element_Access => Snapshot_List_Access);
 
    type Snapshot_Queue_Type is limited record
       Count     : Natural := 0;
       Schema    : Helios.Schemas.Definition_Type_Access;
-      Current   : Snapshot_Refs.Ref;
+      Current   : Snapshot_Type_Access;
    end record;
    type Snapshot_Queue_Access is access all Snapshot_Queue_Type;
 
