@@ -86,13 +86,13 @@ package body Helios.Tools.Files is
       Last := (if Line'Last > File.Line'Last then File.Line'Last else Line'Last);
       File.Line (1 .. Last) := Line (1 .. Last);
       while Pos <= Last and Field_Pos < File.Count loop
-         while Pos <= Last and then Line (Pos) = ' ' loop
+         while Pos <= Last and then Line (Pos) in ' ' | ASCII.HT loop
             Pos := Pos + 1;
          end loop;
          exit when Pos > Last;
          Field_Pos := Field_Pos + 1;
          File.Field_Start (Field_Pos) := Pos;
-         while Pos <= Last and then Line (Pos) /= ' ' loop
+         while Pos <= Last and then not (Line (Pos) in ' ' | ASCII.HT) loop
             Pos := Pos + 1;
          end loop;
          if Line (Pos - 1) = ':' then
