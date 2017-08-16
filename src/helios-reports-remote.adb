@@ -19,6 +19,7 @@ with Util.Serialize.IO.JSON;
 with Util.Streams.Texts;
 with Util.Http.Clients;
 with Util.Log.Loggers;
+with Helios.Monitor;
 package body Helios.Reports.Remote is
 
    use Ada.Strings.Unbounded;
@@ -55,7 +56,7 @@ package body Helios.Reports.Remote is
                            Event  : in out Util.Events.Timers.Timer_Ref'Class) is
       use type Ada.Real_Time.Time_Span;
    begin
-      Report.Queue.Enqueue (Helios.Datas.Get_Report);
+      Report.Queue.Enqueue (Helios.Monitor.Get_Report);
       if Report.Period /= Ada.Real_Time.Time_Span_Zero then
          Event.Repeat (Report.Period);
       end if;
