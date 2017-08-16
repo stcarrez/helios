@@ -97,6 +97,10 @@ private
    end record;
    type Snapshot_List_Access is access all Snapshot_List;
 
+   --  Release the snapshots when the reference counter reaches 0.
+   overriding
+   procedure Finalize (Object : in out Snapshot_List);
+
    package Snapshot_Refs is new Util.Refs.References (Element_Type   => Snapshot_List,
                                                       Element_Access => Snapshot_List_Access);
 
