@@ -15,6 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
+with Ada.Unchecked_Deallocation;
 with Util.Log.Loggers;
 package body Helios.Datas is
 
@@ -154,6 +155,29 @@ package body Helios.Datas is
       Queue.Current := Allocate (Queue);
       Snapshot.End_Time := Queue.Current.Start_Time;
    end Flush;
+
+   --  ------------------------------
+   --  Release the snapshots when the reference counter reaches 0.
+   --  ------------------------------
+   overriding
+   procedure Finalize (Object : in out Snapshot_List) is
+      procedure Free is
+        new Ada.Unchecked_Deallocation (Object => Snapshot_Type,
+                                        Name   => Snapshot_Type_Access);
+      procedure Free is
+        new Ada.Unchecked_Deallocation (Object => Value_Array,
+                                        Name   => Value_Array_Access);
+
+      Snapshot : Snapshot_Type_Access := Object.First;
+      Next     : Snapshot_Type_Access;
+   begin
+      while Snapshot /= null loop
+         Next := Snapshot.Next;
+         Free (Snapshot.Values);
+         Free (Snapshot);
+         Snapshot := Next;
+      end loop;
+   end Finalize;
 
    Empty_Snapshot : Snapshot_Refs.Ref;
 
