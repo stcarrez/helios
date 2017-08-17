@@ -41,6 +41,9 @@ package Helios.Datas is
    --  Get the snapshot start time.
    function Get_Start_Time (Data : in Snapshot_Type) return Ada.Real_Time.Time;
 
+   --  Get the snapshot end time.
+   function Get_End_Time (Data : in Snapshot_Type) return Ada.Real_Time.Time;
+
    --  Set the value in the snapshot.
    procedure Set_Value (Into  : in out Snapshot_Type;
                         Def   : in Schemas.Definition_Type_Access;
