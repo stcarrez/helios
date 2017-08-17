@@ -79,7 +79,7 @@ package body Helios.Reports is
          Stream.Start_Entity (Node.Name);
          if Helios.Schemas.Has_Snapshots (Node) then
             Stream.Write_Entity ("period", 10);
-            --  Write_Timestamp (Stream, "timestamp", Data.Start_Time);
+            Write_Timestamp (Stream, "timestamp", Data.Get_Start_Time);
             Stream.Start_Entity ("snapshot");
          end if;
          Helios.Datas.Iterate (Data, Node, Write_Snapshot'Access, Write_Values'Access);
