@@ -34,6 +34,14 @@ package body Helios.Schemas is
    end Allocate_Index;
 
    --  ------------------------------
+   --  Returns true if the node has some definition children.
+   --  ------------------------------
+   function Has_Children (Node :in Definition_Type_Access) return Boolean is
+   begin
+      return Node.Child /= null;
+   end Has_Children;
+
+   --  ------------------------------
    --  Returns true if the name is allowed by the filter configuration.
    --  The filter string is a comma separated list of allowed names.
    --  The special value "*" allows any name.
