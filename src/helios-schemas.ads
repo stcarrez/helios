@@ -44,7 +44,10 @@ package Helios.Schemas is
    end record;
 
    --  Returns true if the node has some definition children.
-   function Has_Children (Node :in Definition_Type_Access) return Boolean;
+   function Has_Children (Node : in Definition_Type_Access) return Boolean;
+
+   --  Returns true if the node has other nodes that contain values.
+   function Has_Snapshots (Node : in Definition_Type_Access) return Boolean;
 
    --  Add a new definition node to the definition.
    function Create_Definition (Into   : in Definition_Type_Access;
