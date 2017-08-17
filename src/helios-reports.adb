@@ -77,11 +77,15 @@ package body Helios.Reports is
                                 Node   : in Helios.Schemas.Definition_Type_Access) is
       begin
          Stream.Start_Entity (Node.Name);
-         Stream.Write_Entity ("period", 10);
-         --  Write_Timestamp (Stream, "timestamp", Data.Start_Time);
-         Stream.Start_Entity ("snapshot");
+         if Helios.Schemas.Has_Snapshots (Node) then
+            Stream.Write_Entity ("period", 10);
+            --  Write_Timestamp (Stream, "timestamp", Data.Start_Time);
+            Stream.Start_Entity ("snapshot");
+         end if;
          Helios.Datas.Iterate (Data, Node, Write_Snapshot'Access, Write_Values'Access);
-         Stream.End_Entity ("snapshot");
+         if Helios.Schemas.Has_Snapshots (Node) then
+            Stream.End_Entity ("snapshot");
+         end if;
          Stream.End_Entity (Node.Name);
       end Write_Snapshot;
 
