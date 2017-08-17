@@ -43,6 +43,9 @@ package Helios.Schemas is
       Name    : String (1 .. Len);
    end record;
 
+   --  Returns true if the node has some definition children.
+   function Has_Children (Node :in Definition_Type_Access) return Boolean;
+
    --  Add a new definition node to the definition.
    function Create_Definition (Into   : in Definition_Type_Access;
                                Name   : in String;
