@@ -42,6 +42,14 @@ package body Helios.Schemas is
    end Has_Children;
 
    --  ------------------------------
+   --  Returns true if the node has other nodes that contain values.
+   --  ------------------------------
+   function Has_Snapshots (Node : in Definition_Type_Access) return Boolean is
+   begin
+      return Node.Child /= null and then Node.Child.Child = null;
+   end Has_Snapshots;
+
+   --  ------------------------------
    --  Returns true if the name is allowed by the filter configuration.
    --  The filter string is a comma separated list of allowed names.
    --  The special value "*" allows any name.
