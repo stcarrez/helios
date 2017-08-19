@@ -74,6 +74,14 @@ package body Helios.Datas is
    end Get_End_Time;
 
    --  ------------------------------
+   --  Finish updating the current values of the snapshot.
+   --  ------------------------------
+   procedure Finish (Data : in out Snapshot_Type) is
+   begin
+      Data.Offset := Data.Offset + Data.Count;
+   end Finish;
+
+   --  ------------------------------
    --  Set the value in the snapshot.
    --  ------------------------------
    procedure Set_Value (Into  : in out Snapshot_Type;
@@ -150,7 +158,7 @@ package body Helios.Datas is
                       Snapshot : out Snapshot_Type_Access) is
    begin
       Snapshot := Queue.Current;
-      Snapshot.Offset := Snapshot.Offset + Snapshot.Count;
+      --  Snapshot.Offset := Snapshot.Offset + Snapshot.Count;
       if Snapshot.Offset >= Snapshot.Values'Last then
          Flush (Queue);
          Snapshot := Queue.Current;
