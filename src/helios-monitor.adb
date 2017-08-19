@@ -38,6 +38,7 @@ package body Helios.Monitor is
       Helios.Datas.Prepare (Agent.Data, Data);
       Agent_Type'Class (Agent).Collect (Data.all);
       Event.Repeat (Agent.Period);
+      Helios.Datas.Finish (Data.all);
    end Time_Handler;
 
    --  ------------------------------
