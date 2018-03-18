@@ -107,11 +107,14 @@ package body Helios.Monitor.Agent is
    --  Run the monitoring agent main loop.
    --  ------------------------------
    procedure Run (Runtime : in out Runtime_Type) is
+      use Ada.Real_Time;
       Deadline : Ada.Real_Time.Time;
+      Stop_Time : Ada.Real_Time.Time := Ada.Real_Time.Clock + Ada.Real_Time.Seconds (300);
    begin
       while not Runtime.Stop loop
          Runtime.Timers.Process (Deadline);
          delay until Deadline;
+         exit when Stop_Time < Ada.Real_Time.Clock;
       end loop;
    end Run;
 
