@@ -585,6 +585,7 @@ ac_unique_file="src/helios.ads"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 ADO_DIR
+SWAGGER_DIR
 UTIL_DIR
 BUILDS_SHARED
 NR_CPUS
@@ -646,6 +647,7 @@ infodir
 docdir
 oldincludedir
 includedir
+runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -670,6 +672,7 @@ ac_user_opts='
 enable_option_checking
 enable_shared
 with_ada_util
+with_swagger_ada
 with_ada_ado
 '
       ac_precious_vars='build_alias
@@ -718,6 +721,7 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
+runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE}'
@@ -970,6 +974,15 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
+  -runstatedir | --runstatedir | --runstatedi | --runstated \
+  | --runstate | --runstat | --runsta | --runst | --runs \
+  | --run | --ru | --r)
+    ac_prev=runstatedir ;;
+  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
+  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
+  | --run=* | --ru=* | --r=*)
+    runstatedir=$ac_optarg ;;
+
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1107,7 +1120,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir
+		libdir localedir mandir runstatedir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1260,6 +1273,7 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -1298,6 +1312,7 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-ada-util=x       Path for Ada Utility Library
+  --with-swagger-ada=x    Path for Swagger Ada Library
   --with-ada-ado=x        Path for Ada Database Objects
 
 Some influential environment variables:
@@ -3434,6 +3449,108 @@ $as_echo "no" >&6; }
   This project was not found in ../util nor in ../ada-util-*.
   The component is available at git@github.com:stcarrez/ada-util.git.
   Please, download and configure Ada Utility Library.
+  The current configuration was using:
+    ${GNATMAKE}
+    ADA_PROJECT_PATH=$ADA_PROJECT_PATH
+" "$LINENO" 5
+    fi
+  fi
+
+
+
+##########################################
+# Ada Swagger library
+##########################################
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Swagger Ada Library" >&5
+$as_echo_n "checking Swagger Ada Library... " >&6; }
+
+# Check whether --with-swagger-ada was given.
+if test "${with_swagger_ada+set}" = set; then :
+  withval=$with_swagger_ada;
+      gnat_project_name_swagger=${withval}/
+      if test -d "${withval}"; then
+	    gnat_project_name_swagger=${withval}/swagger
+	  fi
+
+else
+
+      gnat_project_name_swagger=swagger
+
+fi
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: trying ${gnat_project_name_swagger}" >&5
+$as_echo "trying ${gnat_project_name_swagger}" >&6; }
+
+  rm -f conftest.gpr
+  # Search in the GNAT project path.
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${gnat_project_name_swagger} project exists in gnatmake's search path" >&5
+$as_echo_n "checking whether ${gnat_project_name_swagger} project exists in gnatmake's search path... " >&6; }
+  echo "with \"${gnat_project_name_swagger}\"; project conftest is for Source_Dirs use (); end conftest;" > conftest.gpr
+  if { ac_try='gnat ls -Pconftest.gpr system.ads > /dev/null 2>conftest.out'
+  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; }
+  then
+    gnat_project_swagger=yes
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+  else
+    gnat_project_swagger=no
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+    # Search in ../swagger-ada-*/swagger.gpr
+    files=`ls -r ../swagger-ada/swagger.gpr ../swagger/swagger.gpr ../swagger-ada-*/swagger.gpr 2>/dev/null`
+    for name in $files; do
+      dir=`dirname $name`
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Swagger Ada Library project in ${dir}" >&5
+$as_echo_n "checking for Swagger Ada Library project in ${dir}... " >&6; }
+      echo "with \"${name}\"; project conftest is for Source_Dirs use (); end conftest;" > conftest.gpr
+      if { ac_try='gnat ls -Pconftest.gpr system.ads > /dev/null 2>conftest.out'
+  { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; }
+      then
+         gnat_project_swagger=yes
+		 gnat_project_name_swagger=${name}
+         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+         break
+      else
+         gnat_project_swagger=no
+         { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+      fi
+    done
+  fi
+  rm -f conftest.gpr
+  if test x${gnat_project_swagger} = xyes; then
+    gnat_project_with_swagger="with \"${gnat_project_name_swagger}\";";
+    gnat_project_dir_swagger=`dirname ${gnat_project_name_swagger}`
+    if test ${gnat_project_dir_swagger} = . ; then
+       gnat_project_dir_swagger=
+    else
+       gnat_project_dir_swagger="${gnat_project_dir_swagger}/"
+    fi
+
+    SERVLET_DIR=${gnat_project_dir_swagger}
+
+  else
+    gnat_project_dir_swagger=
+    gnat_project_name_swagger=
+    if test x"Building Hyperion requires the Ada Swagger Library." != x; then
+      as_fn_error $? "Building Hyperion requires the Ada Swagger Library.
+  You should build and install the Swagger Ada Library component.
+  It must be available and found by ${GNATMAKE}.
+  This project was not found in the ADA_PROJECT_PATH environment variable.
+  This project was not found in ../swagger nor in ../swagger-ada-*.
+  The component is available at git@github.com:stcarrez/swagger-ada.git.
+  Please, download and configure Swagger Ada Library.
   The current configuration was using:
     ${GNATMAKE}
     ADA_PROJECT_PATH=$ADA_PROJECT_PATH
