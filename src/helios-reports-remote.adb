@@ -80,7 +80,7 @@ package body Helios.Reports.Remote is
       end Write;
 
    begin
-      Output.Initialize (null, null, Size => 1_000_000);
+      Output.Initialize (Size => 1_000_000);
       Stream.Initialize (Output'Unchecked_Access);
       Stream.Start_Document;
       Helios.Datas.Iterate (Data, Write'Access);
