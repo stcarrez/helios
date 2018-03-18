@@ -68,6 +68,12 @@ analyze:
 # Clean, then build executables for all mains defined by the project.
 rebuild: clean build
 
+SWAGGER=java -jar swagger-codegen-cli.jar
+
+generate-swagger:
+	$(SWAGGER) generate -l ada -i hyperion.yaml \
+            -DprojectName=helios --model-package Helios.Rest
+
 install:  uninstall
 	$(INSTALL) bin/${NAME} $(prefix)/bin/${NAME}
 
