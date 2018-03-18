@@ -57,6 +57,17 @@ AM_GNAT_FIND_PROJECT([ada-util],[Ada Utility Library],[util],
 AC_SUBST(UTIL_DIR)
 
 ##########################################
+# Ada Swagger library
+##########################################
+AM_GNAT_FIND_PROJECT([swagger-ada],[Swagger Ada Library],[swagger],
+  [git@github.com:stcarrez/swagger-ada.git],
+  [Building Hyperion requires the Ada Swagger Library.],
+  [
+    SERVLET_DIR=${gnat_project_dir_swagger}
+  ])
+AC_SUBST(SWAGGER_DIR)
+
+##########################################
 # Ada Database Objects library
 ##########################################
 AM_GNAT_FIND_PROJECT([ada-ado],[Ada Database Objects],[ado],
