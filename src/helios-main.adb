@@ -60,7 +60,7 @@ begin
             exit;
 
          when 'c' =>
-            Ctx.Config_Path := Ada.Strings.Unbounded.To_Unbounded_String (Parameter);
+            Helios.Commands.Set_Configuration (Ctx, Parameter);
             First := First + 1;
 
          when 'd' =>
