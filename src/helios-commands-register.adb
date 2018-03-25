@@ -16,6 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Real_Time;
+with Ada.Text_IO;
 with Util.Events.Timers;
 with Swagger.Clients;
 with Swagger.Credentials.OAuth;
@@ -24,13 +25,21 @@ with Helios.Monitor.Agent;
 with Helios.Reports.Files;
 with Helios.Rest.Clients;
 with Helios.Rest.Models;
+with GNAT.Sockets;
+with GNAT.Strings;
 package body Helios.Commands.Register is
 
+   use Ada.Text_IO;
+   use type GNAT.Strings.String_Access;
    use type Ada.Real_Time.Time_Span;
 
    function Get_Name (Command : in Command_Type) return Swagger.UString is
    begin
-      return Swagger.To_UString (Command.Name.all);
+      if Command.Name = null then
+         return Swagger.To_UString (GNAT.Sockets.Host_Name);
+      else
+         return Swagger.To_UString (Command.Name.all);
+      end if;
    end Get_Name;
 
    function Get_Ip (Command : in Command_Type) return Swagger.UString is
@@ -45,7 +54,7 @@ package body Helios.Commands.Register is
 
    --  Execute a information command to report information about the agent and monitoring.
    overriding
-   procedure Execute (Command   : in Command_Type;
+   procedure Execute (Command   : in out Command_Type;
                       Name      : in String;
                       Args      : in Argument_List'Class;
                       Context   : in out Context_Type) is
@@ -55,10 +64,17 @@ package body Helios.Commands.Register is
       Agent  : Helios.Rest.Models.Agent_Type;
       Cred   : aliased Swagger.Credentials.OAuth.OAuth2_Credential_Type;
    begin
-      if Args.Get_Count /= 2 then
-         Helios.Commands.Driver.Usage (Args);
+      Load (Context);
+      if Command.Client_Id = null or else Command.Client_Id.all = "" then
+         Put_Line ("Missing client_id parameter");
+         Helios.Commands.Driver.Usage (Args, Name);
+
+      elsif Command.Client_Secret = null or else Command.Client_Secret.all = "" then
+         Put_Line ("Missing client_secret parameter");
+
+      elsif Args.Get_Count /= 2 then
+         Helios.Commands.Driver.Usage (Args, Name);
       else
-         Load (Context);
          Cred.Set_Application_Identifier (Command.Client_Id.all);
          Cred.Set_Application_Secret (Command.Client_Secret.all);
          Client.Set_Server (Args.Get_Argument (1));
@@ -75,15 +91,15 @@ package body Helios.Commands.Register is
       package GC renames GNAT.Command_Line;
    begin
       GC.Define_Switch (Config, Command.Client_Id'Access,
-                        "", "--client-id", "Define the helios client identifier");
+                        "", "--client-id=", "Define the helios client identifier");
       GC.Define_Switch (Config, Command.Client_Secret'Access,
-                        "", "--client-secret", "Define the helios client secret");
+                        "", "--client-secret=", "Define the helios client secret");
       GC.Define_Switch (Config, Command.Server'Access,
-                        "-s:", "--server", "Server hostname or IP address");
+                        "", "--server=", "Server hostname or IP address");
       GC.Define_Switch (Config, Command.Port'Access,
-                        "-p:", "--port", "Server TCP/IP port");
+                        "", "--port=", "Server TCP/IP port");
       GC.Define_Switch (Config, Command.IP'Access,
-                        "", "--client-ip", "IP address of the host to use");
+                        "", "--client-ip=", "IP address of the host to use");
    end Setup;
 
    --  Write the help associated with the command.
