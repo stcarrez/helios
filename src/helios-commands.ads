@@ -32,7 +32,8 @@ package Helios.Commands is
    procedure Initialize;
 
    --  Print the command usage.
-   procedure Usage (Args : in Argument_List'Class);
+   procedure Usage (Args : in Argument_List'Class;
+                    Name : in String := "");
 
    --  Execute the command with its arguments.
    procedure Execute (Name    : in String;
@@ -41,6 +42,10 @@ package Helios.Commands is
 
    --  Load the configuration context from the configuration file.
    procedure Load (Context : in out Context_Type);
+
+   --  Set the path of the configuration file to load.
+   procedure Set_Configuration (Context : in out Context_Type;
+                                Path    : in String);
 
 private
 
