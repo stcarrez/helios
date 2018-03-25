@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands -- Helios commands
---  Copyright (C) 2017 Stephane Carrez
+--  Copyright (C) 2017, 2018 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@
 -----------------------------------------------------------------------
 with Ada.Strings.Unbounded;
 with Util.Commands.Drivers;
+with Util.Commands.Parsers.GNAT_Parser;
 with Util.Properties;
 with Helios.Monitor.Agent;
 package Helios.Commands is
@@ -32,8 +33,9 @@ package Helios.Commands is
    end record;
 
    package Drivers is
-     new Util.Commands.Drivers (Context_Type => Context_Type,
-                                Driver_Name  => "helios");
+     new Util.Commands.Drivers (Context_Type  => Context_Type,
+                                Config_Parser => Util.Commands.Parsers.GNAT_Parser.Config_Parser,
+                                Driver_Name   => "helios");
 
    Driver : Drivers.Driver_Type;
 
