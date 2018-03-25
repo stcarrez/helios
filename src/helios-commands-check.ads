@@ -15,7 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Helios.Commands.Drivers;
 package Helios.Commands.Check is
 
    type Command_Type is new Helios.Commands.Drivers.Command_Type with null record;
