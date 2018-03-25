@@ -26,23 +26,29 @@ package Helios.Commands is
 
    subtype Argument_List is Util.Commands.Argument_List;
 
-   type Context_Type is limited record
-      Config_Path : Ada.Strings.Unbounded.Unbounded_String;
-      Config      : Util.Properties.Manager;
-      Runtime     : Helios.Monitor.Agent.Runtime_Type;
-   end record;
-
-   package Drivers is
-     new Util.Commands.Drivers (Context_Type  => Context_Type,
-                                Config_Parser => Util.Commands.Parsers.GNAT_Parser.Config_Parser,
-                                Driver_Name   => "helios");
-
-   Driver : Drivers.Driver_Type;
+   type Context_Type is limited private;
 
    --  Initialize the commands.
    procedure Initialize;
 
+   --  Print the command usage.
+   procedure Usage (Args : in Argument_List'Class);
+
+   --  Execute the command with its arguments.
+   procedure Execute (Name    : in String;
+                      Args    : in Argument_List'Class;
+                      Context : in out Context_Type);
+
    --  Load the configuration context from the configuration file.
    procedure Load (Context : in out Context_Type);
+
+private
+
+   type Context_Type is limited record
+      Config_Path : Ada.Strings.Unbounded.Unbounded_String;
+      Config      : Util.Properties.Manager;
+      Server      : Util.Properties.Manager;
+      Runtime     : Helios.Monitor.Agent.Runtime_Type;
+   end record;
 
 end Helios.Commands;
