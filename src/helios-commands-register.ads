@@ -17,6 +17,7 @@
 -----------------------------------------------------------------------
 with GNAT.Command_Line;
 with GNAT.Strings;
+with Helios.Commands.Drivers;
 package Helios.Commands.Register is
 
    type Command_Type is new Helios.Commands.Drivers.Command_Type with private;
