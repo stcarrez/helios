@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands-agent -- Helios agent commands
---  Copyright (C) 2017 Stephane Carrez
+--  Copyright (C) 2017, 2018 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,7 +57,7 @@ package body Helios.Commands.Agent is
    --  Execute a information command to report information about the agent and monitoring.
    --  ------------------------------
    overriding
-   procedure Execute (Command   : in Command_Type;
+   procedure Execute (Command   : in out Command_Type;
                       Name      : in String;
                       Args      : in Argument_List'Class;
                       Context   : in out Context_Type) is
