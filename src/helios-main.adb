@@ -89,7 +89,7 @@ begin
 
    if First >= Ada.Command_Line.Argument_Count then
       Ada.Text_IO.Put_Line ("Missing command name to execute.");
-      Helios.Commands.Driver.Usage (All_Args);
+      Helios.Commands.Usage (All_Args);
       Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
       return;
    end if;
@@ -98,7 +98,7 @@ begin
       Cmd_Name : constant String := Full_Switch;
       Args     : Util.Commands.Default_Argument_List (First + 1);
    begin
-      Helios.Commands.Driver.Execute (Cmd_Name, Args, Ctx);
+      Helios.Commands.Execute (Cmd_Name, Args, Ctx);
    end;
 
 exception
