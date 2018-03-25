@@ -18,6 +18,7 @@
 with Ada.IO_Exceptions;
 with Ada.Command_Line;
 with Util.Log.Loggers;
+with Helios.Commands.Drivers;
 with Helios.Commands.Info;
 with Helios.Commands.Check;
 with Helios.Commands.Agent;
@@ -55,9 +56,10 @@ package body Helios.Commands is
    --  ------------------------------
    --  Print the command usage.
    --  ------------------------------
-   procedure Usage (Args : in Argument_List'Class) is
+   procedure Usage (Args : in Argument_List'Class;
+                    Name : in String := "") is
    begin
-      Driver.Usage (Args);
+      Driver.Usage (Args, Name);
    end Usage;
 
    --  ------------------------------
@@ -103,5 +105,14 @@ package body Helios.Commands is
          raise Error;
 
    end Load;
+
+   --  ------------------------------
+   --  Set the path of the configuration file to load.
+   --  ------------------------------
+   procedure Set_Configuration (Context : in out Context_Type;
+                                Path    : in String) is
+   begin
+      Context.Config_Path := Ada.Strings.Unbounded.To_Unbounded_String (Path);
+   end Set_Configuration;
 
 end Helios.Commands;
