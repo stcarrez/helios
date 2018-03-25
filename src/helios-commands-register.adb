@@ -59,7 +59,6 @@ package body Helios.Commands.Register is
                       Args      : in Argument_List'Class;
                       Context   : in out Context_Type) is
 
-
       Client : Helios.Rest.Clients.Client_Type;
       Agent  : Helios.Rest.Models.Agent_Type;
       Cred   : aliased Swagger.Credentials.OAuth.OAuth2_Credential_Type;
@@ -67,13 +66,14 @@ package body Helios.Commands.Register is
       Load (Context);
       if Command.Client_Id = null or else Command.Client_Id.all = "" then
          Put_Line ("Missing client_id parameter");
-         Helios.Commands.Driver.Usage (Args, Name);
+         Helios.Commands.Usage (Args, Name);
 
       elsif Command.Client_Secret = null or else Command.Client_Secret.all = "" then
          Put_Line ("Missing client_secret parameter");
+         Helios.Commands.Usage (Args, Name);
 
       elsif Args.Get_Count /= 2 then
-         Helios.Commands.Driver.Usage (Args, Name);
+         Helios.Commands.Usage (Args, Name);
       else
          Cred.Set_Application_Identifier (Command.Client_Id.all);
          Cred.Set_Application_Secret (Command.Client_Secret.all);

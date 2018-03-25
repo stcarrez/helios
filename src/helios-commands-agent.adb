@@ -63,7 +63,7 @@ package body Helios.Commands.Agent is
                       Context   : in out Context_Type) is
    begin
       if Args.Get_Count /= 0 then
-         Helios.Commands.Driver.Usage (Args);
+         Helios.Commands.Usage (Args);
       else
          Load (Context);
          Setup_Report (Context.Runtime, Context.Config.Get ("report"));

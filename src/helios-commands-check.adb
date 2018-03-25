@@ -56,7 +56,7 @@ package body Helios.Commands.Check is
       Report : aliased Info_Report;
    begin
       if Args.Get_Count /= 1 then
-         Helios.Commands.Driver.Usage (Args);
+         Helios.Commands.Usage (Args);
       else
          Report.Path := Ada.Strings.Unbounded.To_Unbounded_String (Args.Get_Argument (1));
          Load (Context);
