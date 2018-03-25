@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands -- Helios commands
---  Copyright (C) 2017 Stephane Carrez
+--  Copyright (C) 2017, 2018 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,14 +21,16 @@ with Util.Log.Loggers;
 with Helios.Commands.Info;
 with Helios.Commands.Check;
 with Helios.Commands.Agent;
+with Helios.Commands.Register;
 package body Helios.Commands is
 
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Commands");
 
-   Help_Command    : aliased Helios.Commands.Drivers.Help_Command_Type;
-   Info_Command    : aliased Helios.Commands.Info.Command_Type;
-   Check_Command   : aliased Helios.Commands.Check.Command_Type;
-   Agent_Command   : aliased Helios.Commands.Agent.Command_Type;
+   Help_Command     : aliased Helios.Commands.Drivers.Help_Command_Type;
+   Info_Command     : aliased Helios.Commands.Info.Command_Type;
+   Check_Command    : aliased Helios.Commands.Check.Command_Type;
+   Agent_Command    : aliased Helios.Commands.Agent.Command_Type;
+   Register_Command : aliased Helios.Commands.Register.Command_Type;
 
    --  ------------------------------
    --  Initialize the commands.
@@ -45,6 +47,7 @@ package body Helios.Commands is
       Driver.Add_Command ("info", Info_Command'Access);
       Driver.Add_Command ("check", Check_Command'Access);
       Driver.Add_Command ("agent", Agent_Command'Access);
+      Driver.Add_Command ("register", Register_Command'Access);
    end Initialize;
 
    --  ------------------------------
