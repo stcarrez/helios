@@ -32,6 +32,8 @@ package body Helios.Commands is
    Agent_Command    : aliased Helios.Commands.Agent.Command_Type;
    Register_Command : aliased Helios.Commands.Register.Command_Type;
 
+   Driver           : Drivers.Driver_Type;
+
    --  ------------------------------
    --  Initialize the commands.
    --  ------------------------------
@@ -51,12 +53,47 @@ package body Helios.Commands is
    end Initialize;
 
    --  ------------------------------
+   --  Print the command usage.
+   --  ------------------------------
+   procedure Usage (Args : in Argument_List'Class) is
+   begin
+      Driver.Usage (Args);
+   end Usage;
+
+   --  ------------------------------
+   --  Execute the command with its arguments.
+   --  ------------------------------
+   procedure Execute (Name    : in String;
+                      Args    : in Argument_List'Class;
+                      Context : in out Context_Type) is
+   begin
+      Driver.Execute (Name, Args, Context);
+   end Execute;
+
+   --  ------------------------------
+   --  Load the configuration to use REST API to our server.
+   --  ------------------------------
+   procedure Load_Server_Config (Context : in out Context_Type) is
+      Path : constant String := Context.Config.Get ("hyperion", "hyperion-client.cfg");
+   begin
+      Context.Server.Load_Properties (Path);
+
+   exception
+      when Ada.IO_Exceptions.Name_Error =>
+         Log.Error ("Configuration key file '{0}' does not exist.", Path);
+         Log.Error ("Use the '-c config' option to specify a configuration file.");
+         Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
+         raise Error;
+   end Load_Server_Config;
+
+   --  ------------------------------
    --  Load the configuration context from the configuration file.
    --  ------------------------------
    procedure Load (Context : in out Context_Type) is
       Path : constant String := Ada.Strings.Unbounded.To_String (Context.Config_Path);
    begin
       Context.Config.Load_Properties (Path);
+      Load_Server_Config (Context);
 
    exception
       when Ada.IO_Exceptions.Name_Error =>
