@@ -1,11 +1,10 @@
-swagger: '2.0'
+openapi: 3.0.0
 info:
   title: Hyperion API
   description: >
-    Hyperion Monitoring API
-    The monitoring agent is first registered so that the server knows
-    it as well as its security key.  Each host are then registered by
-    a monitoring agent.
+    Hyperion Monitoring API The monitoring agent is first registered so that the
+    server knows it as well as its security key.  Each host are then registered
+    by a monitoring agent.
   version: 1.0.0
   termsOfService: 'https://hyperion.vacs.fr/terms/'
   contact:
@@ -13,191 +12,189 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-host: hyperion.vacs.fr
-basePath: /hyperion/api/v1
 tags:
   - name: agents
     description: Monitoring agents
   - name: hosts
     description: Hosts monitored by Hyperion
-schemes:
-  - https
-  - http
-consumes:
-  - application/x-www-form-urlencoded
-produces:
-  - application/json
 paths:
   /agents:
     post:
       tags:
         - agents
       summary: Register a monitoring agent
-      description: 'Register a new monitoring agent in the system'
+      description: Register a new monitoring agent in the system
       operationId: registerAgent
-      consumes:
-        - application/x-www-form-urlencoded
-      produces:
-        - application/json
-      parameters:
-        - name: name
-          in: formData
-          description: The agent name
-          required: true
-          type: string
-        - name: ip
-          in: formData
-          description: The agent IP address
-          required: true
-          type: string
-        - name: agentKey
-          in: formData
-          description: The agent identification key
-          required: true
-          type: string
       responses:
         '200':
           description: successful operation
-          schema:
-            $ref: '#/definitions/Agent'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
         '405':
           description: Invalid input
       security:
         - agent_auth:
             - 'agent:register'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: The agent name
+                  type: string
+                ip:
+                  description: The agent IP address
+                  type: string
+                agentKey:
+                  description: The agent identification key
+                  type: string
+              required:
+                - name
+                - ip
+                - agentKey
   /hosts:
     post:
       tags:
         - hosts
       summary: Create a host
-      description: 'Register a new host in the monitoring system'
+      description: Register a new host in the monitoring system
       operationId: createHost
-      consumes:
-        - application/x-www-form-urlencoded
-      produces:
-        - application/json
-      parameters:
-        - name: name
-          in: formData
-          description: The host name
-          required: true
-          type: string
-        - name: ip
-          in: formData
-          description: The host IP address
-          required: true
-          type: string
-        - name: hostKey
-          in: formData
-          description: The host identification key
-          required: true
-          type: string
       responses:
         '200':
           description: successful operation
-          schema:
-            $ref: '#/definitions/Host'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Host'
         '405':
           description: Invalid input
       security:
         - agent_auth:
             - 'create:host'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: The host name
+                  type: string
+                ip:
+                  description: The host IP address
+                  type: string
+                hostKey:
+                  description: The host identification key
+                  type: string
+              required:
+                - name
+                - ip
+                - hostKey
 security:
   - agent_auth: []
-securityDefinitions:
-  agent_auth:
-    type: oauth2
-    flow: password
-    tokenUrl: 'http://localhost:8080/v1/oauth/token'
-    scopes:
-      'agent:register': Register a new monitoring agent
-      'create:host': Register and create a host
-      'write:host': Update a new host
-      'read:host': Read a host information
-definitions:
-  Agent:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-        description: The agent identifier
-      name:
-        type: string
-        description: The agent name
-      ip:
-        type: string
-        description: The agent IP address
-      create_date:
-        type: string
-        format: date-time
-        description: The agent registration date
-      key:
-        type: string
-        description: The agent key
-      status:
-        type: string
-        description: The agent status
-        enum:
-          - registered
-          - active
-          - disabled
-    required:
-      - id
-      - name
-      - ip
-      - create_date
-      - status
-      - key
-    example:
-      id: 23
-      name: athena 
-      ip: 192.168.2.10
-      status: registered
-      create_date: 2017-12-24T00:00:00.000Z
-    xml:
-      name: Agent
-  Host:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-        description: The host identifier
-      name:
-        type: string
-        description: The host name
-      ip:
-        type: string
-        description: The host IP address
-      create_date:
-        type: string
-        format: date-time
-        description: The host creation date
-      done_date:
-        type: string
-        format: date-time
-        description: The todo resolution date
-      status:
-        type: string
-        description: The todo state
-        enum:
-          - waiting
-          - working
-          - done
-    required:
-      - id
-      - name
-      - ip
-      - create_date
-    example:
-      id: 23
-      name: athena 
-      ip: 192.168.2.10
-      status: working
-      create_date: 2017-12-24T00:00:00.000Z
-    xml:
-      name: Host
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
+servers:
+  - url: 'https://hyperion.vacs.fr/hyperion/api/v1'
+  - url: 'http://hyperion.vacs.fr/hyperion/api/v1'
+components:
+  securitySchemes:
+    agent_auth:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: 'http://localhost:8080/v1/oauth/token'
+          scopes:
+            'agent:register': Register a new monitoring agent
+            'create:host': Register and create a host
+            'write:host': Update a new host
+            'read:host': Read a host information
+  schemas:
+    Agent:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The agent identifier
+        name:
+          type: string
+          description: The agent name
+        ip:
+          type: string
+          description: The agent IP address
+        create_date:
+          type: string
+          format: date-time
+          description: The agent registration date
+        key:
+          type: string
+          description: The agent key
+        status:
+          type: string
+          description: The agent status
+          enum:
+            - registered
+            - active
+            - disabled
+      required:
+        - id
+        - name
+        - ip
+        - create_date
+        - status
+        - key
+      example:
+        id: 23
+        name: athena
+        ip: 192.168.2.10
+        status: registered
+        create_date: '2017-12-24T00:00:00.000Z'
+      xml:
+        name: Agent
+    Host:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The host identifier
+        name:
+          type: string
+          description: The host name
+        ip:
+          type: string
+          description: The host IP address
+        create_date:
+          type: string
+          format: date-time
+          description: The host creation date
+        done_date:
+          type: string
+          format: date-time
+          description: The todo resolution date
+        status:
+          type: string
+          description: The todo state
+          enum:
+            - waiting
+            - working
+            - done
+      required:
+        - id
+        - name
+        - ip
+        - create_date
+      example:
+        id: 23
+        name: athena
+        ip: 192.168.2.10
+        status: working
+        create_date: '2017-12-24T00:00:00.000Z'
+      xml:
+        name: Host
