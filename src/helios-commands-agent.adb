@@ -29,13 +29,15 @@ package body Helios.Commands.Agent is
    use type Ada.Real_Time.Time_Span;
 
    procedure Setup_Report (Runtime : in out Helios.Monitor.Agent.Runtime_Type;
-                           Config  : in Util.Properties.Manager);
+                           Config  : in Util.Properties.Manager;
+                           Server  : in Util.Properties.Manager);
 
    File_Report   : aliased Helios.Reports.Files.File_Report_Type;
    Remote_Report : aliased Helios.Reports.Remote.Remote_Report_Type;
 
    procedure Setup_Report (Runtime : in out Helios.Monitor.Agent.Runtime_Type;
-                           Config  : in Util.Properties.Manager) is
+                           Config  : in Util.Properties.Manager;
+                           Server :  in Util.Properties.Manager) is
       Mode  : constant String := Config.Get ("mode", "file");
       Timer : Util.Events.Timers.Timer_Ref;
    begin
@@ -47,7 +49,8 @@ package body Helios.Commands.Agent is
          Runtime.Timers.Set_Timer (File_Report'Access, Timer, File_Report.Period);
       else
          Remote_Report.Period := Runtime.Report_Period;
-         Remote_Report.URI := To_Unbounded_String (Config.Get ("remote_uri"));
+         --  Remote_Report.URI := To_Unbounded_String (Config.Get ("remote_uri"));
+         Remote_Report.Set_Server_Config (Server);
          Helios.Reports.Remote.Start (Remote_Report'Access);
          Runtime.Timers.Set_Timer (Remote_Report'Access, Timer, Remote_Report.Period);
       end if;
@@ -66,7 +69,7 @@ package body Helios.Commands.Agent is
          Helios.Commands.Usage (Args);
       else
          Load (Context);
-         Setup_Report (Context.Runtime, Context.Config.Get ("report"));
+         Setup_Report (Context.Runtime, Context.Config.Get ("report"), Context.Server);
          Monitor.Agent.Configure (Context.Runtime, Context.Config);
          Monitor.Agent.Run (Context.Runtime);
       end if;
