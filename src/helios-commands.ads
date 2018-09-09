@@ -56,4 +56,7 @@ private
       Runtime     : Helios.Monitor.Agent.Runtime_Type;
    end record;
 
+   --  Save the server connection configuration.
+   procedure Save_Server_Configuration (Context : in out Context_Type);
+
 end Helios.Commands;
