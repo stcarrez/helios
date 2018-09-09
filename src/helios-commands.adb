@@ -56,10 +56,11 @@ package body Helios.Commands is
    --  ------------------------------
    --  Print the command usage.
    --  ------------------------------
-   procedure Usage (Args : in Argument_List'Class;
+   procedure Usage (Args  : in Argument_List'Class;
                     Name : in String := "") is
+      Context : Context_Type;
    begin
-      Driver.Usage (Args, Name);
+      Driver.Usage (Args, Context, Name);
    end Usage;
 
    --  ------------------------------
@@ -87,6 +88,21 @@ package body Helios.Commands is
          Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
          raise Error;
    end Load_Server_Config;
+
+   --  ------------------------------
+   --  Save the server connection configuration.
+   --  ------------------------------
+   procedure Save_Server_Configuration (Context : in out Context_Type) is
+      Path : constant String := Context.Config.Get ("hyperion", "hyperion-client.cfg");
+   begin
+      Context.Server.Save_Properties (Path);
+
+   exception
+      when Ada.IO_Exceptions.Name_Error =>
+         Log.Error ("Cannot save server configuration");
+         Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
+         raise Error;
+   end Save_Server_Configuration;
 
    --  ------------------------------
    --  Load the configuration context from the configuration file.
