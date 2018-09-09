@@ -29,7 +29,7 @@ package Helios.Commands.Info is
 
    --  Write the help associated with the command.
    overriding
-   procedure Help (Command   : in Command_Type;
+   procedure Help (Command   : in out Command_Type;
                    Context   : in out Context_Type);
 
 end Helios.Commands.Info;
