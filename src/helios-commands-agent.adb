@@ -81,7 +81,7 @@ package body Helios.Commands.Agent is
    --  Write the help associated with the command.
    --  ------------------------------
    overriding
-   procedure Help (Command   : in Command_Type;
+   procedure Help (Command   : in out Command_Type;
                    Context   : in out Context_Type) is
       pragma Unreferenced (Command, Context);
    begin
