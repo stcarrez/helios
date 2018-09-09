@@ -122,6 +122,7 @@ package body Helios.Commands.Register is
          Context.Server.Set ("client_secret", Command.Client_Secret.all);
          Context.Server.Set ("agent_key", Agent.Key);
          Context.Server.Set ("server_url", Args.Get_Argument (1) & "/api/v1");
+         Context.Server.Set ("server_oauth_url", Args.Get_Argument (1) & "/oauth/token");
          Context.Server.Set ("agent_id", Long_Long_Integer'Image (Agent.Id));
          Context.Server.Set ("host_id", Long_Long_Integer'Image (Host.Id));
          Context.Server.Set ("host_key", Host_Key);
