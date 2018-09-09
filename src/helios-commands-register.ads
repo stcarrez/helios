@@ -32,11 +32,12 @@ package Helios.Commands.Register is
    --  Setup the command before parsing the arguments and executing it.
    overriding
    procedure Setup (Command : in out Command_Type;
-                    Config  : in out GNAT.Command_Line.Command_Line_Configuration);
+                    Config  : in out GNAT.Command_Line.Command_Line_Configuration;
+                    Context : in out Context_Type);
 
    --  Write the help associated with the command.
    overriding
-   procedure Help (Command   : in Command_Type;
+   procedure Help (Command   : in out Command_Type;
                    Context   : in out Context_Type);
 
 private
@@ -45,7 +46,6 @@ private
       Client_Id     : aliased GNAT.Strings.String_Access;
       Client_Secret : aliased GNAT.Strings.String_Access;
       Name          : aliased GNAT.Strings.String_Access;
-      Key           : aliased GNAT.Strings.String_Access;
       Server        : aliased GNAT.Strings.String_Access;
       IP            : aliased GNAT.Strings.String_Access;
       Port          : aliased Integer := 0;
