@@ -62,6 +62,7 @@ package body Helios.Commands.Register is
       Client : Helios.Rest.Clients.Client_Type;
       Agent  : Helios.Rest.Models.Agent_Type;
       Cred   : aliased Swagger.Credentials.OAuth.OAuth2_Credential_Type;
+      Scope  : constant String := "agent:register";
    begin
       Load (Context);
       if Command.Client_Id = null or else Command.Client_Id.all = "" then
@@ -77,7 +78,11 @@ package body Helios.Commands.Register is
       else
          Cred.Set_Application_Identifier (Command.Client_Id.all);
          Cred.Set_Application_Secret (Command.Client_Secret.all);
-         Client.Set_Server (Args.Get_Argument (1));
+         Client.Set_Server (Args.Get_Argument (1) & "/api/v1");
+         Cred.Set_Provider_URI (Args.Get_Argument (1) & "/oauth/token");
+         Cred.Request_Token (Context.Server.Get ("username"), Context.Server.Get ("password"), Scope);
+
+         Client.Set_Credentials (Cred'Access);
          Client.Register_Agent (Name      => Get_Name (Command),
                                 Ip        => Get_Ip (Command),
                                 Agent_Key => Get_Key (Command),
@@ -100,6 +105,8 @@ package body Helios.Commands.Register is
                         "", "--port=", "Server TCP/IP port");
       GC.Define_Switch (Config, Command.IP'Access,
                         "", "--client-ip=", "IP address of the host to use");
+      GC.Define_Switch (Config, Command.Key'Access,
+                        "", "--key=", "Agent secret key");
    end Setup;
 
    --  Write the help associated with the command.
