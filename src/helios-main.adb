@@ -81,6 +81,7 @@ begin
       Log_Config.Set ("log4j.appender.console.level", "INFO");
       Log_Config.Set ("log4j.logger.Util", "WARN");
       Log_Config.Set ("log4j.logger.Helios", "DEBUG");
+      Log_Config.Set ("log4j.logger.Swagger", "DEBUG");
    end if;
    if Debug then
       Log_Config.Set ("log4j.appender.console.level", "DEBUG");
