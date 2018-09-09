@@ -19,6 +19,8 @@ with Util.Serialize.IO.JSON;
 with Util.Streams.Texts;
 with Util.Http.Clients;
 with Util.Log.Loggers;
+with Util.Strings;
+with Util.Beans.Objects;
 with Helios.Monitor;
 package body Helios.Reports.Remote is
 
@@ -62,6 +64,37 @@ package body Helios.Reports.Remote is
       end if;
    end Time_Handler;
 
+   --  Set the remote report configuration to connect to the server.
+   procedure Set_Server_Config (Report : in out Remote_Report_Type;
+                                Config : in Util.Properties.Manager) is
+      Value : Util.Beans.Objects.Object;
+      URI   : Ada.Strings.Unbounded.Unbounded_String;
+   begin
+      Value := Config.Get_Value ("host_id");
+      if Util.Beans.Objects.Is_Null (Value) then
+         return;
+      end if;
+      Report.Host_Id := Util.Beans.Objects.To_Integer (Value);
+      Report.Host_Key := Config.Get ("host_key");
+      Report.Username := Config.Get ("username");
+      Report.Password := Config.Get ("password");
+      Report.Scope := To_Unbounded_String ("write:snapshot");
+
+      URI := Config.Get ("server_url");
+      Report.URI := URI;
+      Append (Report.URI, "/hosts/");
+      Append (Report.URI, Util.Strings.Image (Report.Host_Id));
+      Append (Report.URI, "/snapshot");
+
+      --  Step 1: get an OAuth access token.
+      Report.Cred.Set_Application_Identifier (Config.Get ("client_id"));
+      Report.Cred.Set_Application_Secret (Config.get ("client_secret"));
+      Report.Cred.Set_Provider_URI (Config.Get ("server_oauth_url"));
+      Report.Cred.Request_Token (To_String (Report.Username),
+                                 To_String (Report.Password),
+                                 To_String (Report.Scope));
+   end Set_Server_Config;
+
    --  ------------------------------
    --  Send a snapshot report to the server.
    --  ------------------------------
@@ -83,15 +116,32 @@ package body Helios.Reports.Remote is
       Output.Initialize (Size => 1_000_000);
       Stream.Initialize (Output'Unchecked_Access);
       Stream.Start_Document;
+      Stream.Write_Entity ("host_key", Report.Host_Key);
+      Stream.Start_Entity ("snapshot");
       Helios.Datas.Iterate (Data, Write'Access);
+      Stream.End_Entity ("snapshot");
       Stream.End_Document;
       Stream.Close;
       Http.Add_Header ("X-Requested-By", "helios");
       Http.Add_Header ("Content-Type", "application/json");
-      Http.Add_Header ("Bearer", Ada.Strings.Unbounded.To_String (Report.Bearer));
       Http.Add_Header ("Accept", "application/json");
-      Log.Info ("Sending report to {0}", URI);
-      Http.Post (URI, Util.Streams.Texts.To_String (Output), Response);
+
+      for Retry in 1 .. 5 loop
+         Report.Cred.Set_Credentials (Http);
+
+         Log.Info ("Sending report to {0}", URI);
+         Http.Post (URI, Util.Streams.Texts.To_String (Output), Response);
+         exit when Response.Get_Status = 200;
+
+         if Response.Get_Status = 401 then
+            Report.Cred.Request_Token (To_String (Report.Username),
+                                       To_String (Report.Password),
+                                       To_String (Report.Scope));
+         end if;
+         if Response.Get_Status /= 200 then
+            Log.Error ("Sending snapshot failed");
+         end if;
+      end loop;
 
    exception
       when E : others =>
