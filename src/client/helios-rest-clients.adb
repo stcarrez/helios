@@ -40,6 +40,8 @@ package body Helios.Rest.Clients is
        Name : in Swagger.UString;
        Ip : in Swagger.UString;
        Host_Key : in Swagger.UString;
+       Agent_Key : in Swagger.UString;
+       Agent_Id : in Integer;
        Result : out Helios.Rest.Models.Host_Type) is
       URI   : Swagger.Clients.URI_Type;
       Req   : Swagger.Clients.Request_Type;
@@ -50,6 +52,8 @@ package body Helios.Rest.Clients is
       Req.Stream.Write_Entity ("name", Name);
       Req.Stream.Write_Entity ("ip", Ip);
       Req.Stream.Write_Entity ("hostKey", Host_Key);
+      Req.Stream.Write_Entity ("agentKey", Agent_Key);
+      Req.Stream.Write_Entity ("agentId", Agent_Id);
 
       URI.Set_Path ("/hosts");
       Client.Call (Swagger.Clients.POST, URI, Req, Reply);

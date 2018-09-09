@@ -29,6 +29,8 @@ package Helios.Rest.Clients is
        Name : in Swagger.UString;
        Ip : in Swagger.UString;
        Host_Key : in Swagger.UString;
+       Agent_Key : in Swagger.UString;
+       Agent_Id : in Integer;
        Result : out Helios.Rest.Models.Host_Type);
 
 end Helios.Rest.Clients;
