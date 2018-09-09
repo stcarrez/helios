@@ -90,10 +90,18 @@ paths:
                 hostKey:
                   description: The host identification key
                   type: string
+                agentKey:
+                  description: The agent verification key
+                  type: string
+                agentId:
+                  description: The agent identification
+                  type: integer
               required:
                 - name
                 - ip
                 - hostKey
+                - agentKey
+                - agentId
 security:
   - agent_auth: []
 externalDocs:
@@ -108,7 +116,7 @@ components:
       type: oauth2
       flows:
         password:
-          tokenUrl: 'http://localhost:8080/v1/oauth/token'
+          tokenUrl: 'https://hyperion.vacs.fr/hyperion/api/v1/oauth/token'
           scopes:
             'agent:register': Register a new monitoring agent
             'create:host': Register and create a host
