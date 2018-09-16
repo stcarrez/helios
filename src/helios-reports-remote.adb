@@ -116,10 +116,12 @@ package body Helios.Reports.Remote is
       Output.Initialize (Size => 1_000_000);
       Stream.Initialize (Output'Unchecked_Access);
       Stream.Start_Document;
+      Stream.Start_Entity ("");
       Stream.Write_Entity ("host_key", Report.Host_Key);
       Stream.Start_Entity ("snapshot");
       Helios.Datas.Iterate (Data, Write'Access);
       Stream.End_Entity ("snapshot");
+      Stream.End_Entity ("");
       Stream.End_Document;
       Stream.Close;
       Http.Add_Header ("X-Requested-By", "helios");
