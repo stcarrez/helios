@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands -- Helios commands
---  Copyright (C) 2017, 2018 Stephane Carrez
+--  Copyright (C) 2017, 2018, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Strings.Unbounded;
-with Util.Commands.Drivers;
-with Util.Commands.Parsers.GNAT_Parser;
+with Util.Commands;
 with Util.Properties;
 with Helios.Monitor.Agent;
 package Helios.Commands is

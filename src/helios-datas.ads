@@ -113,6 +113,8 @@ private
    package Snapshot_Refs is new Util.Refs.References (Element_Type   => Snapshot_List,
                                                       Element_Access => Snapshot_List_Access);
 
+   subtype Snapshot_Accessor is Snapshot_Refs.Element_Accessor;
+
    type Snapshot_Queue_Type is limited record
       Count     : Natural := 0;
       Schema    : Helios.Schemas.Definition_Type_Access;

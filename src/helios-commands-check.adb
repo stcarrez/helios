@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands-check -- Helios check commands
---  Copyright (C) 2017, 2018 Stephane Carrez
+--  Copyright (C) 2017, 2018, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -73,8 +73,9 @@ package body Helios.Commands.Check is
    --  ------------------------------
    overriding
    procedure Help (Command   : in out Command_Type;
+                   Name      : in String;
                    Context   : in out Context_Type) is
-      pragma Unreferenced (Command, Context);
+      pragma Unreferenced (Name, Command, Context);
    begin
       Ada.Text_IO.Put_Line ("check: check the configuration and collect results in a file");
       Ada.Text_IO.New_Line;

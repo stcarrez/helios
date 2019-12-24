@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-reports-files -- Write reports in files
---  Copyright (C) 2017 Stephane Carrez
+--  Copyright (C) 2017, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,6 @@ with Helios.Monitor;
 package body Helios.Reports.Files is
 
    use type Ada.Real_Time.Time_Span;
-   use type Helios.Datas.Snapshot_Type_Access;
 
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Reports.Files");
 

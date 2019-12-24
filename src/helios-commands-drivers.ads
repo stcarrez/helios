@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands-drivers -- Helios command driver
---  Copyright (C) 2017, 2018 Stephane Carrez
+--  Copyright (C) 2017, 2018, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-
+with Util.Commands.Drivers;
 with Util.Commands.Parsers.GNAT_Parser;
 package Helios.Commands.Drivers is
   new Util.Commands.Drivers (Context_Type  => Context_Type,

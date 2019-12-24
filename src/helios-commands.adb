@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands -- Helios commands
---  Copyright (C) 2017, 2018 Stephane Carrez
+--  Copyright (C) 2017, 2018, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,6 +27,8 @@ package body Helios.Commands is
 
    Log     : constant Util.Log.Loggers.Logger := Util.Log.Loggers.Create ("Helios.Commands");
 
+   procedure Load_Server_Config (Context : in out Context_Type);
+
    Help_Command     : aliased Helios.Commands.Drivers.Help_Command_Type;
    Info_Command     : aliased Helios.Commands.Info.Command_Type;
    Check_Command    : aliased Helios.Commands.Check.Command_Type;
@@ -46,11 +48,11 @@ package body Helios.Commands is
                           "  -v           Verbose execution mode" & ASCII.LF &
                           "  -d           Debug execution mode" & ASCII.LF &
                           "  -c config    Use the configuration file");
-      Driver.Add_Command ("help", Help_Command'Access);
-      Driver.Add_Command ("info", Info_Command'Access);
-      Driver.Add_Command ("check", Check_Command'Access);
-      Driver.Add_Command ("agent", Agent_Command'Access);
-      Driver.Add_Command ("register", Register_Command'Access);
+      Driver.Add_Command ("help", "print some help", Help_Command'Access);
+      Driver.Add_Command ("info", "report information", Info_Command'Access);
+      Driver.Add_Command ("check", "check the agent status", Check_Command'Access);
+      Driver.Add_Command ("agent", "agent start and stop", Agent_Command'Access);
+      Driver.Add_Command ("register", "agent registration", Register_Command'Access);
    end Initialize;
 
    --  ------------------------------

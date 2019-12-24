@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands-register -- Command to register the agent in hyperion
---  Copyright (C) 2018 Stephane Carrez
+--  Copyright (C) 2018, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,30 +15,25 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with Ada.Real_Time;
 with Ada.Text_IO;
 with Ada.Command_Line;
-with Util.Events.Timers;
 with Util.Beans.Objects;
 with Util.Log;
-with Swagger.Clients;
 with Swagger.Credentials.OAuth;
 with Security.Random;
 with Helios.Datas;
-with Helios.Monitor.Agent;
-with Helios.Reports.Files;
 with Helios.Rest.Clients;
 with Helios.Rest.Models;
 with GNAT.Sockets;
-with GNAT.Strings;
 package body Helios.Commands.Register is
 
    use Ada.Text_IO;
    use type GNAT.Strings.String_Access;
-   use type Ada.Real_Time.Time_Span;
 
    function Get_Default_Value (Context : in Context_Type;
                                Name    : in String) return GNAT.Strings.String_Access;
+   function Get_Ip (Command : in Command_Type) return Swagger.UString;
+   function Get_Name (Command : in Command_Type) return Swagger.UString;
 
    function Get_Name (Command : in Command_Type) return Swagger.UString is
    begin
@@ -132,7 +127,7 @@ package body Helios.Commands.Register is
 
    function Get_Default_Value (Context : in Context_Type;
                                Name    : in String) return GNAT.Strings.String_Access is
-      Value : Util.Beans.Objects.Object := Context.Server.Get_Value (Name);
+      Value : constant Util.Beans.Objects.Object := Context.Server.Get_Value (Name);
    begin
       if Util.Beans.Objects.Is_Null (Value) then
          return null;
@@ -168,7 +163,9 @@ package body Helios.Commands.Register is
    --  ------------------------------
    overriding
    procedure Help (Command   : in out Command_Type;
+                   Name      : in String;
                    Context   : in out Context_Type) is
+      pragma Unreferenced (Command, Name, Context);
    begin
       Ada.Text_IO.Put_Line ("register: register the agent to the Hyperion monitoring server");
       Ada.Text_IO.New_Line;

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-reports -- Produce reports for the agent
---  Copyright (C) 2017 Stephane Carrez
+--  Copyright (C) 2017, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,9 +19,7 @@ with Ada.Real_Time;
 package body Helios.Reports is
 
    use type Uint64;
-   use type Helios.Schemas.Value_Index;
    use type Helios.Schemas.Definition_Type_Access;
-   use type Ada.Real_Time.Time;
 
    procedure Write_Timestamp (Stream : in out Util.Serialize.IO.Output_Stream'Class;
                               Name   : in String;
@@ -44,9 +42,15 @@ package body Helios.Reports is
    procedure Write_Snapshot (Stream : in out Util.Serialize.IO.Output_Stream'Class;
                              Data   : in Helios.Datas.Snapshot_Type;
                              Node   : in Helios.Schemas.Definition_Type_Access) is
+      procedure Write_Snapshot (Data   : in Helios.Datas.Snapshot_Type;
+                                Node   : in Helios.Schemas.Definition_Type_Access);
+      procedure Write_Values (Data   : in Helios.Datas.Snapshot_Type;
+                              Node   : in Helios.Schemas.Definition_Type_Access);
 
       procedure Write_Values (Data   : in Helios.Datas.Snapshot_Type;
                               Node   : in Helios.Schemas.Definition_Type_Access) is
+         procedure Write_Value (Value : in Uint64);
+
          Prev_Value : Uint64;
 
          procedure Write_Value (Value : in Uint64) is

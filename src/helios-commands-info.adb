@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands-info -- Helios information commands
---  Copyright (C) 2017, 2018 Stephane Carrez
+--  Copyright (C) 2017, 2018, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,6 @@ with Ada.Real_Time;
 with Util.Events.Timers;
 with Helios.Datas;
 with Helios.Monitor.Agent;
-with Helios.Schemas;
 with Helios.Reports.Files;
 package body Helios.Commands.Info is
 
@@ -31,6 +30,8 @@ package body Helios.Commands.Info is
                       Name      : in String;
                       Args      : in Argument_List'Class;
                       Context   : in out Context_Type) is
+      pragma Unreferenced (Command, Name, Args);
+
       type Info_Report is new Helios.Reports.Files.File_Report_Type with null record;
       --  The timer handler executed when the timer deadline has passed.
       overriding
@@ -60,6 +61,7 @@ package body Helios.Commands.Info is
    --  Write the help associated with the command.
    overriding
    procedure Help (Command   : in out Command_Type;
+                   Name      : in String;
                    Context   : in out Context_Type) is
    begin
       null;

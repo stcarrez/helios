@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-monitor-agent -- Helios monitor agent
---  Copyright (C) 2017 Stephane Carrez
+--  Copyright (C) 2017, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -108,8 +108,9 @@ package body Helios.Monitor.Agent is
    --  ------------------------------
    procedure Run (Runtime : in out Runtime_Type) is
       use Ada.Real_Time;
-      Deadline : Ada.Real_Time.Time;
-      Stop_Time : Ada.Real_Time.Time := Ada.Real_Time.Clock + Ada.Real_Time.Seconds (300);
+      Deadline  : Ada.Real_Time.Time;
+      Stop_Time : constant Ada.Real_Time.Time
+        := Ada.Real_Time.Clock + Ada.Real_Time.Seconds (300);
    begin
       while not Runtime.Stop loop
          Runtime.Timers.Process (Deadline);

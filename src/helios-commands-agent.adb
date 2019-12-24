@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands-agent -- Helios agent commands
---  Copyright (C) 2017, 2018 Stephane Carrez
+--  Copyright (C) 2017, 2018, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,6 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with Ada.Real_Time;
 with Ada.Text_IO;
 with Util.Log;
 with Util.Properties;
@@ -26,7 +25,6 @@ with Helios.Reports.Remote;
 package body Helios.Commands.Agent is
 
    use Ada.Strings.Unbounded;
-   use type Ada.Real_Time.Time_Span;
 
    procedure Setup_Report (Runtime : in out Helios.Monitor.Agent.Runtime_Type;
                            Config  : in Util.Properties.Manager;
@@ -85,8 +83,9 @@ package body Helios.Commands.Agent is
    --  ------------------------------
    overriding
    procedure Help (Command   : in out Command_Type;
+                   Name      : in String;
                    Context   : in out Context_Type) is
-      pragma Unreferenced (Command, Context);
+      pragma Unreferenced (Name, Command, Context);
    begin
       Ada.Text_IO.Put_Line ("agent: start the monitoring agent");
       Ada.Text_IO.New_Line;

@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-main -- Helios agent main procedure
---  Copyright (C) 2017 Stephane Carrez
+--  Copyright (C) 2017, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 -----------------------------------------------------------------------
 with Ada.Text_IO;
 with Ada.Command_Line;
-with Ada.Strings.Unbounded;
 with GNAT.Command_Line;
 
 with Util.Log.Loggers;
@@ -104,6 +103,9 @@ begin
 
 exception
    when Helios.Commands.Error =>
+      Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
+
+   when Util.Commands.Not_Found =>
       Ada.Command_Line.Set_Exit_Status (Ada.Command_Line.Failure);
 
    when E : others =>

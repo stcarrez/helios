@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-commands-register -- Command to register the agent in hyperion
---  Copyright (C) 2018 Stephane Carrez
+--  Copyright (C) 2018, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,6 +38,7 @@ package Helios.Commands.Register is
    --  Write the help associated with the command.
    overriding
    procedure Help (Command   : in out Command_Type;
+                   Name      : in String;
                    Context   : in out Context_Type);
 
 private

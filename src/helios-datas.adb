@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
 --  helios-monitor -- Helios monitor
---  Copyright (C) 2017 Stephane Carrez
+--  Copyright (C) 2017, 2019 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,8 @@ package body Helios.Datas is
 
    function Allocate (Queue : in Snapshot_Queue_Type) return Snapshot_Type_Access is
       Snapshot : constant Snapshot_Type_Access := new Snapshot_Type;
-      Count    : constant Value_Array_Index := Queue.Schema.Index * Value_Array_Index (Queue.Count);
+      Count    : constant Value_Array_Index
+        := Queue.Schema.Index * Value_Array_Index (Queue.Count);
    begin
       Log.Info ("Allocate snapshot with {0} values", Value_Array_Index'Image (Count));
       Snapshot.Schema := Queue.Schema;
@@ -116,10 +117,12 @@ package body Helios.Datas is
    --  ------------------------------
    procedure Iterate (Data    : in Helios.Datas.Snapshot_Type;
                       Node    : in Helios.Schemas.Definition_Type_Access;
-                      Process_Snapshot : not null access procedure (D : in Snapshot_Type;
-                                                                    N : in Definition_Type_Access);
-                      Process_Values  : not null access procedure (D : in Snapshot_Type;
-                                                                   N : in Definition_Type_Access)) is
+                      Process_Snapshot : not null access
+                        procedure (D : in Snapshot_Type;
+                                   N : in Definition_Type_Access);
+                      Process_Values  : not null access
+                        procedure (D : in Snapshot_Type;
+                                   N : in Definition_Type_Access)) is
       Child : Helios.Schemas.Definition_Type_Access;
    begin
       Child := Node.Child;
@@ -139,15 +142,17 @@ package body Helios.Datas is
    procedure Iterate (Report  : in Report_Queue_Type;
                       Process : not null access procedure (Data : in Snapshot_Type;
                                                            Node : in Definition_Type_Access)) is
-      List      : constant Snapshot_List_Access := Report.Snapshot.Value;
-      Snapshot  : Snapshot_Type_Access;
    begin
-      if List /= null then
-         Snapshot := List.First;
-         while Snapshot /= null loop
-            Process (Snapshot.all, Snapshot.Schema);
-            Snapshot := Snapshot.Next;
-         end loop;
+      if not Report.Snapshot.Is_Null then
+         declare
+            List      : constant Snapshot_Accessor := Report.Snapshot.Value;
+            Snapshot  : Snapshot_Type_Access := List.First;
+         begin
+            while Snapshot /= null loop
+               Process (Snapshot.all, Snapshot.Schema);
+               Snapshot := Snapshot.Next;
+            end loop;
+         end;
       end if;
    end Iterate;
 
@@ -169,7 +174,7 @@ package body Helios.Datas is
    --  Flush the snapshot to start a fresh one for the queue.
    --  ------------------------------
    procedure Flush (Queue : in out Snapshot_Queue_Type) is
-      Snapshot : Snapshot_Type_Access := Queue.Current;
+      Snapshot : constant Snapshot_Type_Access := Queue.Current;
    begin
       if Reports.Snapshot.Is_Null then
          Reports.Snapshot := Snapshot_Refs.Create;
@@ -206,7 +211,7 @@ package body Helios.Datas is
    Empty_Snapshot : Snapshot_Refs.Ref;
 
    function Get_Report return Report_Queue_Type is
-      Result : Report_Queue_Type := Reports;
+      Result : constant Report_Queue_Type := Reports;
    begin
       Reports.Snapshot := Empty_Snapshot;
       return Result;
