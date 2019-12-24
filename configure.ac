@@ -4,22 +4,11 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/helios.ads)
 
-AC_CANONICAL_SYSTEM
-dnl AM_MAINTAINER_MODE
-
 # Current release settings
 HELIOS_MAJOR_VERSION=0
 HELIOS_MINOR_VERSION=1
 HELIOS_MICRO_VERSION=0
 HELIOS_VERSION=$HELIOS_MAJOR_VERSION.$HELIOS_MINOR_VERSION.$HELIOS_MICRO_VERSION
-AM_GNAT_CHECK_GPRBUILD
-AM_GNAT_CHECK_INSTALL
-
-# checking for local tools
-AC_PROG_CC
-AC_PROG_MAKE_SET
-AC_PROG_INSTALL
-AC_PROG_LN_S
 
 # Set the version number of the project
 AC_SUBST(HELIOS_VERSION)
@@ -29,6 +18,10 @@ AC_SUBST(HELIOS_MICRO_VERSION)
 
 EXEC_PREFIX="$prefix"
 AC_SUBST(EXEC_PREFIX)
+AM_GNAT_LIBRARY_PROJECT(helios)
+# checking for local tools
+AC_PROG_CC
+
 HELIOS_LIBDIR="lib"
 AC_SUBST(HELIOS_LIBDIR)
 
@@ -78,5 +71,6 @@ AM_GNAT_FIND_PROJECT([ada-ado],[Ada Database Objects],[ado],
   ])
 AC_SUBST(ADO_DIR)
 AC_OUTPUT(
-Makefile helios.gpr
+Makefile.conf
+helios.gpr
 )
